@@ -1,230 +1,303 @@
 {
   "trains": [
     {
-      "id": "TR-101",
-      "trainNumber": "EXP-101",
-      "name": "Hogwarts Express",
-      "origin": "Sycamore Station",
-      "destination": "Pine Station",
-      "scheduledTime": "12:00 PM",
-      "estimatedTime": "12:00 PM",
-      "platform": "Platform 1",
+      "id": "TR-22436",
+      "trainNumber": "22436",
+      "name": "Vande Bharat Express",
+      "origin": "New Delhi (NDLS)",
+      "destination": "Varanasi (BSB)",
+      "scheduledTime": "06:00 AM",
+      "estimatedTime": "06:00 AM",
+      "platform": "Platform 16",
       "status": "ON-TIME",
       "delayMinutes": 0,
       "delayReason": "None",
       "stops": [
         {
-          "station": "Sycamore",
+          "station": "New Delhi (NDLS)",
           "status": "ON-TIME",
-          "arrival": "12:00pm",
+          "arrival": "06:00am",
+          "departure": "06:00am"
+        },
+        {
+          "station": "Kanpur Central (CNB)",
+          "status": "ON-TIME",
+          "arrival": "10:08am",
+          "departure": "10:10am"
+        },
+        {
+          "station": "Prayagraj (PRYJ)",
+          "status": "ON-TIME",
+          "arrival": "12:08pm",
           "departure": "12:10pm"
         },
         {
-          "station": "Pine",
+          "station": "Varanasi (BSB)",
           "status": "ON-TIME",
-          "arrival": "1:00pm",
-          "departure": "1:10pm"
+          "arrival": "02:00pm",
+          "departure": "02:00pm"
         }
       ],
-      "coachDensity": "Overcrowded",
-      "densityReports": 14
+      "coachDensity": "Low",
+      "densityReports": 42
     },
     {
-      "id": "TR-102",
-      "trainNumber": "EXP-204",
-      "name": "Flying Scotsman",
-      "origin": "Pine Station",
-      "destination": "Sycamore Station",
-      "scheduledTime": "12:30 PM",
-      "estimatedTime": "12:45 PM",
-      "platform": "Platform 4",
-      "status": "DELAYED",
-      "delayMinutes": 25,
-      "delayReason": "Track Signaling Interruption at Sycamore Junction",
-      "stops": [
-        {
-          "station": "Pine",
-          "status": "ON-TIME",
-          "arrival": "12:30pm",
-          "departure": "12:35pm"
-        },
-        {
-          "station": "Sycamore",
-          "status": "DELAYED",
-          "arrival": "1:00pm",
-          "departure": "1:10pm",
-          "delayedArrival": "1:15pm",
-          "delayedDeparture": "1:25pm"
-        }
-      ],
-      "coachDensity": "Overcrowded",
-      "densityReports": 34
-    },
-    {
-      "id": "TR-103",
-      "trainNumber": "EXP-309",
-      "name": "Orient Express",
-      "origin": "Sycamore Station",
-      "destination": "Cypress Terminal",
-      "scheduledTime": "01:15 PM",
-      "estimatedTime": "01:30 PM",
-      "platform": "Platform 2",
+      "id": "TR-12951",
+      "trainNumber": "12951",
+      "name": "Mumbai Rajdhani Express",
+      "origin": "Mumbai Central (MMCT)",
+      "destination": "New Delhi (NDLS)",
+      "scheduledTime": "05:00 PM",
+      "estimatedTime": "05:15 PM",
+      "platform": "Platform 1",
       "status": "DELAYED",
       "delayMinutes": 15,
-      "delayReason": "Mechanical Brake Check at Cypress",
+      "delayReason": "Signaling Interruption near Vadodara Junction",
       "stops": [
         {
-          "station": "Sycamore",
+          "station": "Mumbai Central (MMCT)",
           "status": "ON-TIME",
-          "arrival": "1:15pm",
-          "departure": "1:25pm"
+          "arrival": "05:00pm",
+          "departure": "05:00pm"
         },
         {
-          "station": "Cypress",
+          "station": "Surat (ST)",
+          "status": "ON-TIME",
+          "arrival": "07:43pm",
+          "departure": "07:48pm"
+        },
+        {
+          "station": "Vadodara (BRC)",
           "status": "DELAYED",
-          "arrival": "2:00pm",
-          "departure": "2:10pm",
-          "delayedArrival": "2:15pm",
-          "delayedDeparture": "2:25pm"
+          "arrival": "09:10pm",
+          "departure": "09:20pm"
+        },
+        {
+          "station": "New Delhi (NDLS)",
+          "status": "DELAYED",
+          "arrival": "08:32am",
+          "departure": "08:32am"
         }
       ],
       "coachDensity": "Moderate",
-      "densityReports": 18
+      "densityReports": 68
     },
     {
-      "id": "TR-104",
-      "trainNumber": "EXP-412",
-      "name": "Golden Arrow",
-      "origin": "Cypress Terminal",
-      "destination": "Hickory Central",
-      "scheduledTime": "02:00 PM",
-      "estimatedTime": "02:00 PM",
-      "platform": "Platform 4",
+      "id": "TR-12002",
+      "trainNumber": "12002",
+      "name": "Bhopal Shatabdi Express",
+      "origin": "New Delhi (NDLS)",
+      "destination": "Rani Kamlapati (RKMP)",
+      "scheduledTime": "06:00 AM",
+      "estimatedTime": "06:00 AM",
+      "platform": "Platform 1",
       "status": "ON-TIME",
       "delayMinutes": 0,
       "delayReason": "None",
       "stops": [
         {
-          "station": "Cypress",
+          "station": "New Delhi (NDLS)",
           "status": "ON-TIME",
-          "arrival": "2:00pm",
-          "departure": "2:10pm"
+          "arrival": "06:00am",
+          "departure": "06:00am"
         },
         {
-          "station": "Pine",
+          "station": "Agra Cantt (AGC)",
           "status": "ON-TIME",
-          "arrival": "2:30pm",
-          "departure": "2:35pm"
+          "arrival": "07:50am",
+          "departure": "07:55am"
         },
         {
-          "station": "Hickory",
+          "station": "Gwalior (GWL)",
           "status": "ON-TIME",
-          "arrival": "3:10pm",
-          "departure": "3:20pm"
+          "arrival": "09:23am",
+          "departure": "09:28am"
+        },
+        {
+          "station": "Rani Kamlapati (RKMP)",
+          "status": "ON-TIME",
+          "arrival": "02:00pm",
+          "departure": "02:00pm"
         }
       ],
       "coachDensity": "Low",
-      "densityReports": 8
+      "densityReports": 29
     },
     {
-      "id": "TR-105",
-      "trainNumber": "EXP-550",
-      "name": "Pacific Surfliner",
-      "origin": "Hickory Central",
-      "destination": "Pine Station",
-      "scheduledTime": "03:30 PM",
-      "estimatedTime": "CANCELLED",
-      "platform": "Platform 1",
-      "status": "CANCELLED",
-      "delayMinutes": 0,
-      "delayReason": "Severe Track Maintenance & Debris Clear",
+      "id": "TR-12259",
+      "trainNumber": "12259",
+      "name": "Sealdah Duronto Express",
+      "origin": "Sealdah (SDAH)",
+      "destination": "Bikaner Junction (BKN)",
+      "scheduledTime": "05:00 PM",
+      "estimatedTime": "05:25 PM",
+      "platform": "Platform 9",
+      "status": "DELAYED",
+      "delayMinutes": 25,
+      "delayReason": "Track Maintenance & Speed Restriction near Dhanbad",
       "stops": [
         {
-          "station": "Hickory",
-          "status": "CANCELLED",
-          "arrival": "3:30pm",
-          "departure": "3:40pm"
+          "station": "Sealdah (SDAH)",
+          "status": "ON-TIME",
+          "arrival": "05:00pm",
+          "departure": "05:00pm"
         },
         {
-          "station": "Pine",
-          "status": "CANCELLED",
-          "arrival": "4:30pm",
-          "departure": "4:40pm"
+          "station": "Dhanbad (DHN)",
+          "status": "DELAYED",
+          "arrival": "08:10pm",
+          "departure": "08:15pm"
+        },
+        {
+          "station": "Kanpur Central (CNB)",
+          "status": "DELAYED",
+          "arrival": "06:20am",
+          "departure": "06:25am"
+        },
+        {
+          "station": "Bikaner (BKN)",
+          "status": "DELAYED",
+          "arrival": "03:45pm",
+          "departure": "03:45pm"
+        }
+      ],
+      "coachDensity": "Heavy",
+      "densityReports": 84
+    },
+    {
+      "id": "TR-82501",
+      "trainNumber": "82501",
+      "name": "Lucknow Tejas Express",
+      "origin": "Lucknow JN (LJN)",
+      "destination": "New Delhi (NDLS)",
+      "scheduledTime": "06:10 AM",
+      "estimatedTime": "06:10 AM",
+      "platform": "Platform 6",
+      "status": "ON-TIME",
+      "delayMinutes": 0,
+      "delayReason": "None",
+      "stops": [
+        {
+          "station": "Lucknow JN (LJN)",
+          "status": "ON-TIME",
+          "arrival": "06:10am",
+          "departure": "06:10am"
+        },
+        {
+          "station": "Kanpur Central (CNB)",
+          "status": "ON-TIME",
+          "arrival": "07:20am",
+          "departure": "07:25am"
+        },
+        {
+          "station": "Ghaziabad (GZB)",
+          "status": "ON-TIME",
+          "arrival": "11:43am",
+          "departure": "11:45am"
+        },
+        {
+          "station": "New Delhi (NDLS)",
+          "status": "ON-TIME",
+          "arrival": "12:25pm",
+          "departure": "12:25pm"
         }
       ],
       "coachDensity": "Low",
-      "densityReports": 0
+      "densityReports": 19
+    },
+    {
+      "id": "TR-12049",
+      "trainNumber": "12049",
+      "name": "Gatimaan Express",
+      "origin": "Hazrat Nizamuddin (NZM)",
+      "destination": "Virangana Lakshmibai Jhansi (VGLJ)",
+      "scheduledTime": "08:10 AM",
+      "estimatedTime": "08:10 AM",
+      "platform": "Platform 5",
+      "status": "ON-TIME",
+      "delayMinutes": 0,
+      "delayReason": "None",
+      "stops": [
+        {
+          "station": "Hazrat Nizamuddin (NZM)",
+          "status": "ON-TIME",
+          "arrival": "08:10am",
+          "departure": "08:10am"
+        },
+        {
+          "station": "Agra Cantt (AGC)",
+          "status": "ON-TIME",
+          "arrival": "09:50am",
+          "departure": "09:55am"
+        },
+        {
+          "station": "Gwalior (GWL)",
+          "status": "ON-TIME",
+          "arrival": "11:13am",
+          "departure": "11:15am"
+        },
+        {
+          "station": "Jhansi (VGLJ)",
+          "status": "ON-TIME",
+          "arrival": "12:35pm",
+          "departure": "12:35pm"
+        }
+      ],
+      "coachDensity": "Low",
+      "densityReports": 31
     }
   ],
   "historyLogs": [
     {
-      "id": "HIST-101",
-      "trainId": "TR-101",
-      "trainNumber": "EXP-101",
+      "id": "HIST-22436",
+      "trainId": "TR-22436",
+      "trainNumber": "22436",
       "delayMinutes": 0,
       "status": "ON-TIME",
-      "station": "Sycamore",
-      "timestamp": "2026-08-04T08:19:38.862Z"
+      "station": "New Delhi (NDLS)",
+      "timestamp": "2026-08-05T06:00:00.000Z"
     },
     {
-      "id": "HIST-102",
-      "trainId": "TR-102",
-      "trainNumber": "EXP-204",
-      "delayMinutes": 25,
-      "status": "DELAYED",
-      "station": "Pine",
-      "timestamp": "2026-08-04T20:19:38.863Z"
-    },
-    {
-      "id": "HIST-103",
-      "trainId": "TR-103",
-      "trainNumber": "EXP-309",
+      "id": "HIST-12951",
+      "trainId": "TR-12951",
+      "trainNumber": "12951",
       "delayMinutes": 15,
       "status": "DELAYED",
-      "station": "Cypress",
-      "timestamp": "2026-08-05T02:19:38.863Z"
-    },
-    {
-      "id": "HIST-104",
-      "trainId": "TR-104",
-      "trainNumber": "EXP-412",
-      "delayMinutes": 0,
-      "status": "ON-TIME",
-      "station": "Hickory",
-      "timestamp": "2026-08-05T05:19:38.863Z"
+      "station": "Vadodara (BRC)",
+      "timestamp": "2026-08-05T09:10:00.000Z"
     }
   ],
   "gpsTelemetry": [
     {
-      "id": "GPS-1785918021800",
-      "trainId": "TR-101",
-      "trainNumber": "EXP-101",
-      "lat": 40.7128,
-      "lng": -74.006,
-      "speedKmh": 82,
-      "timestamp": "2026-08-05T08:20:21.800Z"
+      "id": "GPS-22436",
+      "trainId": "TR-22436",
+      "trainNumber": "22436",
+      "lat": 28.6139,
+      "lng": 77.209,
+      "speedKmh": 130,
+      "timestamp": "2026-08-05T11:45:00.000Z"
     }
   ],
   "coachDensity": {
-    "TR-101": {
-      "density": "Overcrowded",
-      "reports": 14,
-      "lastUpdated": "2026-08-05T08:28:19.667Z"
-    },
-    "TR-102": {
+    "TR-22436": {
       "density": "Low",
-      "reports": 35,
-      "lastUpdated": "2026-08-05T08:28:27.178Z"
+      "reports": 42,
+      "lastUpdated": "2026-08-05T11:45:00.000Z"
     },
-    "TR-103": {
+    "TR-12951": {
       "density": "Moderate",
-      "reports": 18,
-      "lastUpdated": "2026-08-05T08:19:38.863Z"
+      "reports": 68,
+      "lastUpdated": "2026-08-05T11:45:00.000Z"
     },
-    "TR-104": {
+    "TR-12002": {
       "density": "Low",
-      "reports": 8,
-      "lastUpdated": "2026-08-05T08:19:38.863Z"
+      "reports": 29,
+      "lastUpdated": "2026-08-05T11:45:00.000Z"
+    },
+    "TR-12259": {
+      "density": "Heavy",
+      "reports": 84,
+      "lastUpdated": "2026-08-05T11:45:00.000Z"
     }
   },
   "multiRegionState": {

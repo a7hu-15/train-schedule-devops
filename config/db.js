@@ -32,17 +32,16 @@ var lowDb = low(adapter);
 lowDb.defaults({
   trains: [],
   historyLogs: [
-    { id: 'HIST-101', trainId: 'TR-101', trainNumber: 'EXP-101', delayMinutes: 0, status: 'ON-TIME', station: 'Sycamore', timestamp: new Date(Date.now() - 86400000).toISOString() },
-    { id: 'HIST-102', trainId: 'TR-102', trainNumber: 'EXP-204', delayMinutes: 25, status: 'DELAYED', station: 'Pine', timestamp: new Date(Date.now() - 43200000).toISOString() },
-    { id: 'HIST-103', trainId: 'TR-103', trainNumber: 'EXP-309', delayMinutes: 15, status: 'DELAYED', station: 'Cypress', timestamp: new Date(Date.now() - 21600000).toISOString() },
-    { id: 'HIST-104', trainId: 'TR-104', trainNumber: 'EXP-412', delayMinutes: 0, status: 'ON-TIME', station: 'Hickory', timestamp: new Date(Date.now() - 10800000).toISOString() }
+    { id: 'HIST-22436', trainId: 'TR-22436', trainNumber: '22436', delayMinutes: 0, status: 'ON-TIME', station: 'New Delhi (NDLS)', timestamp: new Date(Date.now() - 86400000).toISOString() },
+    { id: 'HIST-12951', trainId: 'TR-12951', trainNumber: '12951', delayMinutes: 15, status: 'DELAYED', station: 'Vadodara (BRC)', timestamp: new Date(Date.now() - 43200000).toISOString() },
+    { id: 'HIST-12259', trainId: 'TR-12259', trainNumber: '12259', delayMinutes: 25, status: 'DELAYED', station: 'Dhanbad (DHN)', timestamp: new Date(Date.now() - 21600000).toISOString() }
   ],
   gpsTelemetry: [],
   coachDensity: {
-    'TR-101': { density: 'Low', reports: 12, lastUpdated: new Date().toISOString() },
-    'TR-102': { density: 'Overcrowded', reports: 34, lastUpdated: new Date().toISOString() },
-    'TR-103': { density: 'Moderate', reports: 18, lastUpdated: new Date().toISOString() },
-    'TR-104': { density: 'Low', reports: 8, lastUpdated: new Date().toISOString() }
+    'TR-22436': { density: 'Low', reports: 42, lastUpdated: new Date().toISOString() },
+    'TR-12951': { density: 'Moderate', reports: 68, lastUpdated: new Date().toISOString() },
+    'TR-12002': { density: 'Low', reports: 29, lastUpdated: new Date().toISOString() },
+    'TR-12259': { density: 'Heavy', reports: 84, lastUpdated: new Date().toISOString() }
   },
   multiRegionState: {
     primaryRegion: 'us-east-1 (N. Virginia - Active)',
@@ -67,7 +66,7 @@ async function getTrains() {
 
 async function getTrainById(id) {
   var trains = await getTrains();
-  var train = trains.find(function(t) { return t.id === id || t.name === id; });
+  var train = trains.find(function(t) { return t.id === id || t.name === id || t.trainNumber === id; });
   return train;
 }
 
@@ -117,9 +116,9 @@ async function recordGpsPing(trainId, lat, lng, speed) {
     id: 'GPS-' + Date.now(),
     trainId: trainId,
     trainNumber: train ? train.trainNumber : 'EXP',
-    lat: parseFloat(lat) || 40.7128,
-    lng: parseFloat(lng) || -74.0060,
-    speedKmh: Math.round(speed || (45 + Math.random() * 30)),
+    lat: parseFloat(lat) || 28.6139,
+    lng: parseFloat(lng) || 77.2090,
+    speedKmh: Math.round(speed || (75 + Math.random() * 45)),
     timestamp: new Date().toISOString()
   };
 
@@ -197,6 +196,46 @@ async function toggleRegionFailover(region) {
   return state;
 }
 
+// Start Live Real-Time Train Engine Simulator
+function startLiveTrainSimulator(app) {
+  setInterval(async function() {
+    try {
+      var trains = lowDb.get('trains').value() || [];
+      if (trains.length === 0) return;
+
+      var idx = Math.floor(Math.random() * trains.length);
+      var train = trains[idx];
+
+      if (train.status !== 'CANCELLED') {
+        var rand = Math.random();
+        if (rand < 0.5) {
+          var delta = Math.floor(Math.random() * 5) - 2; // -2 to +2 mins
+          train.delayMinutes = Math.max(0, train.delayMinutes + delta);
+
+          if (train.delayMinutes === 0) {
+            train.status = 'ON-TIME';
+            train.delayReason = 'None';
+            train.estimatedTime = train.scheduledTime;
+          } else {
+            train.status = 'DELAYED';
+            if (!train.delayReason || train.delayReason === 'None') {
+              train.delayReason = 'Operational Congestion / Speed Restriction';
+            }
+          }
+          lowDb.get('trains').find({ id: train.id }).assign(train).write();
+        }
+      }
+
+      if (app) {
+        var io = app.get('io');
+        if (io) io.emit('trains_updated', await getTrains());
+      }
+    } catch (err) {
+      console.warn('Live simulation update error:', err.message);
+    }
+  }, 10000);
+}
+
 module.exports = {
   isPgAvailable,
   getTrains,
@@ -208,5 +247,6 @@ module.exports = {
   getHistoricalAnalytics,
   recordCoachDensity,
   getMultiRegionStatus,
-  toggleRegionFailover
+  toggleRegionFailover,
+  startLiveTrainSimulator
 };

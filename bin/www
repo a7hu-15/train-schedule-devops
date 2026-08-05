@@ -8,6 +8,7 @@ var app = require('../app');
 var debug = require('debug')('cicd-pipeline-train-schedule-git:server');
 var http = require('http');
 var socketIo = require('socket.io');
+var dbEngine = require('../config/db');
 
 /**
  * Get port from environment and store in Express.
@@ -34,6 +35,11 @@ io.on('connection', function(socket) {
     console.log('WebSocket client disconnected:', socket.id);
   });
 });
+
+/**
+ * Start Automated Real-Time Train Live Simulator Engine
+ */
+dbEngine.startLiveTrainSimulator(app);
 
 /**
  * Listen on provided port, on all network interfaces.
