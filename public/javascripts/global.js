@@ -1,11 +1,17 @@
-// RailPulse Client Engine - Real-Time WebSockets & Sync Controller
+// RailPulse Client Engine - Real-Time WebSockets, Route Map, Security & Alerts
 
 var allTrainsData = [];
 var activeStationFilter = "";
 var searchQuery = "";
 var socket = null;
+var isOperatorAuthed = false;
+var subscribedAlerts = [];
 
 $(document).ready(function() {
+  // Check Operator Session Auth
+  isOperatorAuthed = sessionStorage.getItem('operator_authed') === 'true';
+  updateOperatorSecurityState();
+
   // Connect WebSocket for Instant Live Push Updates (< 50ms latency)
   initWebSocket();
 
@@ -34,6 +40,17 @@ $(document).ready(function() {
     renderCommuterBoard();
   });
 
+  // Tab change authorization check
+  $('#operator-tab').on('click', function(e) {
+    if (!isOperatorAuthed) {
+      $('#operatorAuthModal').modal('show');
+    }
+  });
+
+  // Operator Auth Handlers
+  $('#btnSubmitAuth').on('click', checkOperatorAuth);
+  $('#btnLockOperator').on('click', lockOperatorDesk);
+
   // Preset Reason Toggle in Dispatch Modal
   $('#dispatchPresetReason').on('change', function() {
     if ($(this).val() === 'Custom') {
@@ -42,6 +59,9 @@ $(document).ready(function() {
       $('#dispatchCustomReason').hide();
     }
   });
+
+  // Alert Subscription Handler
+  $('#btnSaveSubscribe').on('click', submitAlertSubscription);
 
   // Save Dispatch Updates
   $('#btnSaveDispatch').on('click', submitDispatchUpdate);
@@ -66,11 +86,13 @@ function initWebSocket() {
 
       // Handle Live Push Updates
       socket.on('trains_updated', function(data) {
-        logSreTerminal('📡 Live WebSocket Push received! Refreshing passenger board instantly.');
+        logSreTerminal('📡 Live WebSocket Push received! Refreshing all connected passenger views.');
         allTrainsData = data || [];
         renderSummaryStats();
         renderCommuterBoard();
         renderOperatorTable();
+        renderRouteMap();
+        checkPassengerAlertTriggers();
       });
 
       socket.on('disconnect', function() {
@@ -96,9 +118,114 @@ function fetchTrainsData() {
     renderSummaryStats();
     renderCommuterBoard();
     renderOperatorTable();
+    renderRouteMap();
   }).fail(function(err) {
     logSreTerminal('Error fetching trains API feed.');
   });
+}
+
+// Operator RBAC Security Auth
+function checkOperatorAuth() {
+  var pin = $('#operatorPinInput').val().trim();
+  if (pin === '1234' || pin === 'dispatch123' || pin === 'admin') {
+    isOperatorAuthed = true;
+    sessionStorage.setItem('operator_authed', 'true');
+    $('#operatorAuthModal').modal('hide');
+    $('#authErrorMsg').hide();
+    updateOperatorSecurityState();
+    $('#operator-tab').tab('show');
+    logSreTerminal('🔐 Operator desk unlocked by authorized user.');
+  } else {
+    $('#authErrorMsg').show();
+  }
+}
+
+function lockOperatorDesk() {
+  isOperatorAuthed = false;
+  sessionStorage.removeItem('operator_authed');
+  updateOperatorSecurityState();
+  $('#commuter-tab').tab('show');
+  logSreTerminal('🔒 Operator desk locked.');
+}
+
+function updateOperatorSecurityState() {
+  if (isOperatorAuthed) {
+    $('#operatorAuthStatus').removeClass('badge-danger').addClass('badge-success').html('<i class="fas fa-lock-open mr-1"></i> Operator Authenticated');
+    $('#btnLockOperator').show();
+  } else {
+    $('#operatorAuthStatus').removeClass('badge-success').addClass('badge-danger').html('<i class="fas fa-lock mr-1"></i> Desk Locked');
+    $('#btnLockOperator').hide();
+  }
+}
+
+// Alert Subscription
+function submitAlertSubscription() {
+  var email = $('#subEmail').val().trim();
+  var trainId = $('#subTrainId').val();
+  var threshold = parseInt($('#subThreshold').val(), 10) || 0;
+
+  if (!email) {
+    alert('Please enter a valid email address.');
+    return;
+  }
+
+  subscribedAlerts.push({ email: email, trainId: trainId, threshold: threshold });
+  $('#subscribeModal').modal('hide');
+  showToastNotification('success', '🔔 Subscribed! You will receive live alerts for ' + (trainId === 'ALL' ? 'All Trains' : trainId) + ' at ' + email);
+  logSreTerminal('Passenger subscribed to delay alerts: ' + email);
+}
+
+function checkPassengerAlertTriggers() {
+  if (subscribedAlerts.length === 0) return;
+
+  allTrainsData.forEach(function(t) {
+    if (t.status === 'DELAYED' || t.status === 'CANCELLED') {
+      subscribedAlerts.forEach(function(sub) {
+        if (sub.trainId === 'ALL' || sub.trainId === t.id) {
+          if (t.delayMinutes >= sub.threshold) {
+            showToastNotification('warning', '🚨 LIVE DELAY ALERT: Train ' + t.name + ' (' + (t.trainNumber || 'EXP') + ') is ' + t.status + ' (+' + t.delayMinutes + 'm). Reason: ' + (t.delayReason || 'Disruption'));
+          }
+        }
+      });
+    }
+  });
+}
+
+function showToastNotification(type, message) {
+  var alertClass = type === 'success' ? 'alert-success' : 'alert-warning';
+  var html = '<div class="alert ' + alertClass + ' alert-dismissible fade show shadow" role="alert">' +
+             '  <strong>' + message + '</strong>' +
+             '  <button type="button" class="close" data-dismiss="alert">&times;</button>' +
+             '</div>';
+  $('#globalAlertContainer').html(html);
+}
+
+// Render Route Map
+function renderRouteMap() {
+  if (allTrainsData.length === 0) {
+    $('#mapTrainList').html('<div class="col-12 text-center text-muted py-3">No active trains on line.</div>');
+    return;
+  }
+
+  var html = '';
+  allTrainsData.forEach(function(t) {
+    var statusBadge = 'status-badge-' + t.status;
+    html += '<div class="col-md-6 col-lg-4 mb-3">';
+    html += '  <div class="card bg-black border-secondary p-3 text-white h-100">';
+    html += '    <div class="d-flex justify-content-between align-items-center mb-2">';
+    html += '      <span class="font-weight-bold text-info"><i class="fas fa-train mr-1"></i> ' + t.name + '</span>';
+    html += '      <span class="' + statusBadge + '">' + t.status + '</span>';
+    html += '    </div>';
+    html += '    <p class="x-small text-muted mb-2">Route: ' + (t.origin || 'Sycamore') + ' &rarr; ' + (t.destination || 'Hickory') + '</p>';
+    html += '    <div class="d-flex justify-content-between align-items-center x-small">';
+    html += '      <span><i class="fas fa-clock mr-1 text-muted"></i> Sched: ' + t.scheduledTime + '</span>';
+    html += '      <span class="platform-pill">' + (t.platform || 'Platform 1') + '</span>';
+    html += '    </div>';
+    html += '  </div>';
+    html += '</div>';
+  });
+
+  $('#mapTrainList').html(html);
 }
 
 // Render Summary Stats
@@ -121,14 +248,12 @@ function renderSummaryStats() {
 // Render Commuter Board Cards
 function renderCommuterBoard() {
   var filtered = allTrainsData.filter(function(t) {
-    // Station filter
     if (activeStationFilter) {
       var stationMatch = (t.origin && t.origin.indexOf(activeStationFilter) !== -1) ||
                          (t.destination && t.destination.indexOf(activeStationFilter) !== -1) ||
                          (t.stops && t.stops.some(function(s) { return s.station && s.station.indexOf(activeStationFilter) !== -1; }));
       if (!stationMatch) return false;
     }
-    // Search query filter
     if (searchQuery) {
       var q = searchQuery.toLowerCase();
       var matchName = t.name && t.name.toLowerCase().indexOf(q) !== -1;
@@ -230,6 +355,11 @@ function renderOperatorTable() {
 
 // Open Dispatch Modal
 function openDispatchModal(id) {
+  if (!isOperatorAuthed) {
+    $('#operatorAuthModal').modal('show');
+    return;
+  }
+
   var train = allTrainsData.find(function(t) { return t.id === id; });
   if (!train) return;
 

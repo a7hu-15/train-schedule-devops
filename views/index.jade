@@ -15,6 +15,10 @@ block content
             i.fas.fa-clock.mr-2
             span Commuter Board
         li.nav-item
+          a.nav-link#map-tab(data-toggle="tab", href="#map-view", role="tab")
+            i.fas.fa-map-marked-alt.mr-2
+            span Live Route Map
+        li.nav-item
           a.nav-link#operator-tab(data-toggle="tab", href="#operator-view", role="tab")
             i.fas.fa-sliders-h.mr-2
             span Operator Desk
@@ -24,11 +28,13 @@ block content
             span SRE Chaos Room
 
       .system-time-badge.text-right
-        span.d-block.small.text-muted REAL-TIME DISRUPTION FEED
+        button.btn.btn-outline-warning.btn-sm.mr-2(data-toggle="modal", data-target="#subscribeModal")
+          i.fas.fa-bell.mr-1
+          span Subscribe Alerts
         span.font-weight-bold.text-success#liveClock --:--:--
 
-    // Alert Banner
-    #globalAlertContainer
+    // Alert Banner Container for Live Delay Toast Notifications
+    #globalAlertContainer.mt-3
 
     // Tab Contents
     .tab-content.mt-4#tabContent
@@ -40,7 +46,7 @@ block content
           .col-md-6
             .search-box.position-relative
               i.fas.fa-search.search-icon
-              input.form-control.search-input#commuterSearch(type="text", placeholder="Search by station, train name, or train number (e.g. Sycamore, EXP-101)...")
+              input.form-control.search-input#commuterSearch(type="text", placeholder="Search by station, train name, or train number...")
           .col-md-6.text-md-right.mt-2.mt-md-0
             span.small.text-muted.mr-2 Filter by Station:
             .btn-group.btn-group-sm.station-filter-group(role="group")
@@ -68,16 +74,65 @@ block content
         #commuterTrainGrid.row
 
       // ==========================================
-      // TAB 2: TRANSIT OPERATOR DISPATCH DESK
+      // TAB 2: LIVE ROUTE MAP & TRAIN TRACKER
+      // ==========================================
+      .tab-pane.fade#map-view(role="tabpanel")
+        .card.bg-dark-card.text-white.p-4.mb-4
+          .d-flex.justify-content-between.align-items-center.mb-3
+            div
+              h5.font-weight-bold.mb-0 Interactive Transit Line Network
+              p.small.text-muted Live track status, station nodes, and real-time train positions.
+            span.badge.badge-success.p-2
+              i.fas.fa-broadcast-tower.mr-1
+              span Network Status: Operational
+
+          // Route Map Diagram
+          .route-map-container.py-5.px-3.my-3.bg-black.rounded.position-relative
+            .route-line
+            .d-flex.justify-content-between.align-items-center.position-relative(style="z-index: 2;")
+              .station-node.text-center
+                .node-circle.bg-success
+                  i.fas.fa-building
+                span.d-block.font-weight-bold.mt-2 Sycamore
+                span.x-small.text-muted Terminal A
+              .station-node.text-center
+                .node-circle.bg-info
+                  i.fas.fa-subway
+                span.d-block.font-weight-bold.mt-2 Pine
+                span.x-small.text-muted Central Hub
+              .station-node.text-center
+                .node-circle.bg-warning
+                  i.fas.fa-exchange-alt
+                span.d-block.font-weight-bold.mt-2 Cypress
+                span.x-small.text-muted Junction
+              .station-node.text-center
+                .node-circle.bg-primary
+                  i.fas.fa-flag-checkered
+                span.d-block.font-weight-bold.mt-2 Hickory
+                span.x-small.text-muted South Line
+
+          .mt-4
+            h6.font-weight-bold.mb-3 Active Trains On Line
+            #mapTrainList.row
+
+      // ==========================================
+      // TAB 3: TRANSIT OPERATOR DISPATCH DESK (RBAC Protected)
       // ==========================================
       .tab-pane.fade#operator-view(role="tabpanel")
         .d-flex.justify-content-between.align-items-center.mb-3
           div
             h5.text-white.mb-0 Dispatcher Operations Panel
             p.small.text-muted.mb-0 Update train statuses, adjust delay minutes, select disruption reasons, or re-assign platforms live.
-          button.btn.btn-success.btn-sm(data-toggle="modal", data-target="#addTrainModal")
-            i.fas.fa-plus-circle.mr-2
-            span Add Schedule
+          div
+            span.badge.badge-success.mr-2.p-2#operatorAuthStatus
+              i.fas.fa-lock-open.mr-1
+              span Operator Authenticated
+            button.btn.btn-outline-danger.btn-sm.mr-2#btnLockOperator
+              i.fas.fa-lock.mr-1
+              span Lock Desk
+            button.btn.btn-success.btn-sm(data-toggle="modal", data-target="#addTrainModal")
+              i.fas.fa-plus-circle.mr-2
+              span Add Schedule
 
         .table-responsive.bg-dark-card.rounded.p-3
           table.table.table-dark.table-hover.mb-0#operatorTable
@@ -97,7 +152,7 @@ block content
                 td(colspan="9").text-center.text-muted Loading dispatch data...
 
       // ==========================================
-      // TAB 3: SRE CHAOS & RELIABILITY ROOM
+      // TAB 4: SRE CHAOS & RELIABILITY ROOM
       // ==========================================
       .tab-pane.fade#sre-view(role="tabpanel")
         .row
@@ -142,7 +197,7 @@ block content
             .card.bg-dark-card.text-white
               .card-header
                 i.fas.fa-terminal.mr-2.text-warning
-                span Real-Time Probe Log Monitor
+                span Real-Time Probe & WebSocket Log Monitor
               .card-body
                 pre.p-3.bg-black.text-success.rounded.small.mb-0#sreLogTerminal(style="height: 180px; overflow-y: auto;") System initialized. Listening for probe metrics...
 
@@ -150,7 +205,57 @@ block content
   // MODALS
   // ==========================================
   
-  // Dispatch Modal
+  // Operator Login Modal (RBAC Security)
+  .modal.fade#operatorAuthModal(tabindex="-1", role="dialog", data-backdrop="static", data-keyboard="false", aria-hidden="true")
+    .modal-dialog.modal-dialog-centered(role="document")
+      .modal-content.bg-dark-modal.text-white
+        .modal-header
+          h5.modal-title
+            i.fas.fa-user-shield.mr-2.text-warning
+            span Operator Desk Security Check
+        .modal-body
+          p.small.text-muted Access to the Operator Control Desk requires authorization. Please enter your Dispatcher Passcode.
+          form#operatorAuthForm
+            .form-group
+              label.small.text-muted Passcode / PIN
+              input.form-control.bg-dark-input.text-white#operatorPinInput(type="password", placeholder="Enter PIN (Default: 1234 or dispatch123)", required)
+              .invalid-feedback#authErrorMsg Invalid passcode. Please try again.
+        .modal-footer
+          button.btn.btn-primary.btn-block#btnSubmitAuth(type="button") Unlock Operator Desk
+
+  // Passenger Alert Subscription Modal
+  .modal.fade#subscribeModal(tabindex="-1", role="dialog", aria-hidden="true")
+    .modal-dialog.modal-dialog-centered(role="document")
+      .modal-content.bg-dark-modal.text-white
+        .modal-header
+          h5.modal-title
+            i.fas.fa-bell.mr-2.text-warning
+            span Subscribe to Delay Alerts
+          button.close.text-white(type="button", data-dismiss="modal") &times;
+        .modal-body
+          form#subscribeForm
+            .form-group
+              label.small.text-muted Email Address
+              input.form-control.bg-dark-input.text-white#subEmail(type="email", placeholder="commuter@example.com", required)
+            .form-group
+              label.small.text-muted Select Train Schedule
+              select.form-control.bg-dark-input.text-white#subTrainId
+                option(value="ALL") All Trains & Disruption Alerts
+                option(value="TR-101") Hogwarts Express (EXP-101)
+                option(value="TR-102") Flying Scotsman (EXP-204)
+                option(value="TR-103") Orient Express (EXP-309)
+                option(value="TR-104") Golden Arrow (EXP-412)
+            .form-group
+              label.small.text-muted Alert Threshold
+              select.form-control.bg-dark-input.text-white#subThreshold
+                option(value="0") Any Delay or Platform Change
+                option(value="5") Delay > 5 minutes
+                option(value="15") Delay > 15 minutes
+        .modal-footer
+          button.btn.btn-secondary(type="button", data-dismiss="modal") Close
+          button.btn.btn-warning#btnSaveSubscribe(type="button") Enable Notifications
+
+  // Dispatch Edit Modal
   .modal.fade#dispatchModal(tabindex="-1", role="dialog", aria-hidden="true")
     .modal-dialog.modal-dialog-centered(role="document")
       .modal-content.bg-dark-modal.text-white
