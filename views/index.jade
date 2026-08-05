@@ -2,16 +2,25 @@ extends layout
 
 block content
   .app-container
-    // Navbar Header
-    header.main-header.d-flex.justify-content-between.align-items-center
+    // Dynamic Island Header Notification Capsule
+    .dynamic-island-container
+      .dynamic-island.d-flex.align-items-center
+        i.fas.fa-circle.text-success.mr-2.fa-xs(style="animation: pulse 2s infinite;")
+        span.font-weight-semibold.small.mr-3 RailPulse Live Network Feed
+        span.text-muted.x-small.mr-3 |
+        span.font-weight-bold.text-white.small#liveClock --:--:--
+
+    // Apple Navbar Header
+    header.main-header.d-flex.justify-content-between.align-items-center.mb-4
       .brand-title.d-flex.align-items-center
-        i.fas.fa-train.text-warning.mr-2.fa-lg
+        .apple-logo-icon.mr-3
+          i.fas.fa-train.text-warning.fa-lg
         div
-          span.font-weight-bold.text-white.h5.mb-0 RailPulse
-          span.d-block.x-small.text-muted Transit Disruption & Operations
+          span.font-weight-bold.text-white.h5.mb-0.letter-spacing-tight RailPulse
+          span.d-block.x-small.text-muted Transit Operations & Disruption Hub
       
-      // Main Navigation
-      ul.nav.nav-pills.main-nav#mainTabs(role="tablist")
+      // macOS Segmented Control Bar
+      ul.nav.apple-segmented-nav#mainTabs(role="tablist")
         li.nav-item
           a.nav-link.active#commuter-tab(data-toggle="tab", href="#commuter-view", role="tab")
             i.fas.fa-clock.mr-2
@@ -30,26 +39,23 @@ block content
             span System Health & SRE
 
       .d-flex.align-items-center
-        button.btn.btn-outline-warning.btn-sm.mr-2(data-toggle="modal", data-target="#subscribeModal")
-          i.fas.fa-bell.mr-1
+        button.btn.btn-outline-light.apple-btn-pill.mr-2(data-toggle="modal", data-target="#subscribeModal")
+          i.fas.fa-bell.mr-1.text-warning
           span Alerts
         
-        button.btn.btn-outline-primary.btn-sm.mr-3#btnStaffLogin(data-toggle="modal", data-target="#operatorAuthModal")
+        button.btn.btn-primary.apple-btn-pill#btnStaffLogin(data-toggle="modal", data-target="#operatorAuthModal")
           i.fas.fa-user-lock.mr-1
-          span Staff Mode
+          span Staff Sign In
         
-        button.btn.btn-outline-danger.btn-sm.mr-3#btnStaffLogout(style="display: none;")
+        button.btn.btn-outline-danger.apple-btn-pill#btnStaffLogout(style="display: none;")
           i.fas.fa-sign-out-alt.mr-1
           span Sign Out
-        
-        .time-display.text-right
-          span.font-weight-bold.text-success#liveClock --:--:--
 
     // Alert Banner Container
-    #globalAlertContainer.mt-3
+    #globalAlertContainer.mb-4
 
-    // Main Tab Views
-    .tab-content.mt-4#tabContent
+    // Main Content Views
+    .tab-content#tabContent
       // ==========================================
       // VIEW 1: LIVE DEPARTURES (COMMUTER VIEW)
       // ==========================================
@@ -57,32 +63,32 @@ block content
         .row.mb-4.align-items-center
           .col-md-7
             .search-box.position-relative
-              i.fas.fa-search.search-icon
-              input.form-control.search-input#commuterSearch(type="text", placeholder="Search by station, train name, or train number...")
-          .col-md-5.text-md-right.mt-2.mt-md-0
-            span.small.text-muted.mr-2 Station Filter:
+              i.fas.fa-search.apple-search-icon
+              input.form-control.apple-search-input#commuterSearch(type="text", placeholder="Search station, train name, or train number...")
+          .col-md-5.text-md-right.mt-2.mt-md-0.apple-filter-pill
+            span.x-small.text-muted.mr-2 Station:
             .btn-group.btn-group-sm.station-filter-group(role="group")
-              button.btn.btn-outline-secondary.active(data-station="") All
-              button.btn.btn-outline-secondary(data-station="Sycamore") Sycamore
-              button.btn.btn-outline-secondary(data-station="Pine") Pine
-              button.btn.btn-outline-secondary(data-station="Cypress") Cypress
-              button.btn.btn-outline-secondary(data-station="Hickory") Hickory
+              button.btn.active(data-station="") All
+              button.btn(data-station="Sycamore") Sycamore
+              button.btn(data-station="Pine") Pine
+              button.btn(data-station="Cypress") Cypress
+              button.btn(data-station="Hickory") Hickory
 
         // Summary Bar
-        .disruption-summary.mb-4.p-3.rounded.bg-dark-card
+        .apple-card.mb-4.p-4
           .row.text-center
             .col-md-3.col-6.border-right.border-secondary
-              span.d-block.x-small.text-muted TOTAL SCHEDULES
-              span.h4.font-weight-bold.text-white#totalTrainsCount 0
+              span.d-block.x-small.text-muted.letter-spacing-wide TOTAL TRAINS
+              span.h3.font-weight-bold.text-white#totalTrainsCount 0
             .col-md-3.col-6.border-right.border-secondary
-              span.d-block.x-small.text-muted ON TIME
-              span.h4.font-weight-bold.text-success#onTimeCount 0
+              span.d-block.x-small.text-muted.letter-spacing-wide ON TIME
+              span.h3.font-weight-bold.text-success#onTimeCount 0
             .col-md-3.col-6.border-right.border-secondary
-              span.d-block.x-small.text-muted DELAYED
-              span.h4.font-weight-bold.text-warning#delayedCount 0
+              span.d-block.x-small.text-muted.letter-spacing-wide DELAYED
+              span.h3.font-weight-bold.text-warning#delayedCount 0
             .col-md-3.col-6
-              span.d-block.x-small.text-muted CANCELLED
-              span.h4.font-weight-bold.text-danger#cancelledCount 0
+              span.d-block.x-small.text-muted.letter-spacing-wide CANCELLED
+              span.h3.font-weight-bold.text-danger#cancelledCount 0
 
         #commuterTrainGrid.row
 
@@ -90,37 +96,37 @@ block content
       // VIEW 2: NETWORK MAP
       // ==========================================
       .tab-pane.fade#map-view(role="tabpanel")
-        .card.bg-dark-card.text-white.p-4.mb-4
+        .apple-card.p-4.mb-4
           .d-flex.justify-content-between.align-items-center.mb-3
             div
               h5.font-weight-bold.mb-0 Transit Line Topology
-              p.small.text-muted.mb-0 Track nodes and live status indicators across line segments.
-            span.badge.badge-success.p-2
+              p.x-small.text-muted.mb-0 Live track node status and real-time train positioning.
+            span.badge.badge-success.apple-btn-pill.p-2
               i.fas.fa-broadcast-tower.mr-1
               span Network Operational
 
-          .route-map-container.py-5.px-3.my-3.bg-black.rounded.position-relative
+          .apple-map-box.py-5.px-3.my-4.position-relative
             .route-line
             .d-flex.justify-content-between.align-items-center.position-relative(style="z-index: 2;")
               .station-node.text-center
                 .node-circle.bg-success
-                  i.fas.fa-building
-                span.d-block.font-weight-bold.mt-2 Sycamore
+                  i.fas.fa-building.text-white
+                span.d-block.font-weight-bold.mt-2.small Sycamore
                 span.x-small.text-muted Terminal A
               .station-node.text-center
                 .node-circle.bg-info
-                  i.fas.fa-subway
-                span.d-block.font-weight-bold.mt-2 Pine
+                  i.fas.fa-subway.text-white
+                span.d-block.font-weight-bold.mt-2.small Pine
                 span.x-small.text-muted Central Hub
               .station-node.text-center
                 .node-circle.bg-warning
-                  i.fas.fa-exchange-alt
-                span.d-block.font-weight-bold.mt-2 Cypress
+                  i.fas.fa-exchange-alt.text-white
+                span.d-block.font-weight-bold.mt-2.small Cypress
                 span.x-small.text-muted Junction
               .station-node.text-center
                 .node-circle.bg-primary
-                  i.fas.fa-flag-checkered
-                span.d-block.font-weight-bold.mt-2 Hickory
+                  i.fas.fa-flag-checkered.text-white
+                span.d-block.font-weight-bold.mt-2.small Hickory
                 span.x-small.text-muted Terminal B
 
           .mt-4
@@ -134,251 +140,245 @@ block content
         .d-flex.justify-content-between.align-items-center.mb-3
           div
             h5.text-white.mb-0 Dispatcher Operations Desk
-            p.small.text-muted.mb-0 Update train statuses, adjust delay minutes, select disruption reasons, or re-assign platforms live.
+            p.x-small.text-muted.mb-0 Update train statuses, adjust delay minutes, select disruption reasons, or re-assign platforms live.
           div
             span.badge.badge-success.mr-2.p-2#operatorAuthStatus
               i.fas.fa-lock-open.mr-1
               span Staff Authenticated
-            button.btn.btn-success.btn-sm#btnOpenAddTrainModal(data-toggle="modal", data-target="#addTrainModal")
+            button.btn.btn-success.btn-sm.apple-btn-pill#btnOpenAddTrainModal(data-toggle="modal", data-target="#addTrainModal")
               i.fas.fa-plus-circle.mr-2
               span Add Schedule
 
-        .table-responsive.bg-dark-card.rounded.p-3.mb-4
-          table.table.table-dark.table-hover.mb-0#operatorTable
-            thead
-              tr
-                th Train No.
-                th Train Name
-                th Route
-                th Sched.
-                th Platform
-                th Status
-                th Delay (Mins)
-                th Disruption Reason
-                th Actions
-            tbody#operatorTableBody
-              tr
-                td(colspan="9").text-center.text-muted Loading dispatch data...
+        .apple-card.p-3.mb-4
+          .table-responsive
+            table.table.table-apple.table-hover.mb-0#operatorTable
+              thead
+                tr
+                  th Train No.
+                  th Train Name
+                  th Route
+                  th Sched.
+                  th Platform
+                  th Status
+                  th Delay (Mins)
+                  th Disruption Reason
+                  th Actions
+              tbody#operatorTableBody
+                tr
+                  td(colspan="9").text-center.text-muted Loading dispatch data...
 
-        // Operational Audit Trail Section
-        .card.bg-dark-card.text-white
-          .card-header.d-flex.justify-content-between.align-items-center
+        .apple-card.p-4
+          .d-flex.justify-content-between.align-items-center.mb-3
             span.font-weight-bold
               i.fas.fa-history.text-info.mr-2
               span Operational Security Audit Log
-            span.badge.badge-info Audit Active
-          .card-body.p-0
-            .table-responsive(style="max-height: 200px; overflow-y: auto;")
-              table.table.table-dark.table-sm.table-striped.mb-0
-                thead
-                  tr
-                    th Timestamp
-                    th Action
-                    th Operational Details
-                    th Role
-                tbody#auditLogsTableBody
-                  tr
-                    td(colspan="4").text-center.text-muted Loading security audit history...
+            span.badge.badge-info.apple-btn-pill Audit Active
+          .table-responsive(style="max-height: 200px; overflow-y: auto;")
+            table.table.table-apple.table-sm.table-striped.mb-0
+              thead
+                tr
+                  th Timestamp
+                  th Action
+                  th Operational Details
+                  th Role
+              tbody#auditLogsTableBody
+                tr
+                  td(colspan="4").text-center.text-muted Loading security audit history...
 
       // ==========================================
       // VIEW 4: SYSTEM HEALTH & SRE (STAFF ONLY)
       // ==========================================
       .tab-pane.fade#sre-view(role="tabpanel")
-        // Service Metrics Summary Card
-        .card.bg-dark-card.text-white.mb-4
-          .card-header.d-flex.justify-content-between.align-items-center
+        .apple-card.p-4.mb-4
+          .d-flex.justify-content-between.align-items-center.mb-3
             span.font-weight-bold
               i.fas.fa-chart-line.text-success.mr-2
               span System Observability & Service Metrics
-            span.badge.badge-success Target: 99.9% Availability
-          .card-body
-            .row.text-center
-              .col-md-3.col-6.border-right.border-secondary
-                span.d-block.x-small.text-muted AVAILABILITY UPTIME
-                span.h4.font-weight-bold.text-success#sloAvailabilityVal 99.94%
-              .col-md-3.col-6.border-right.border-secondary
-                span.d-block.x-small.text-muted SYNTHETIC LATENCY
-                span.h4.font-weight-bold.text-info#synthP95Val 18ms
-              .col-md-3.col-6.border-right.border-secondary
-                span.d-block.x-small.text-muted ERROR BUDGET
-                span.h4.font-weight-bold.text-primary#sloBudgetVal 98.2%
-              .col-md-3.col-6
-                span.d-block.x-small.text-muted DISRUPTION COUNT
-                span.h4.font-weight-bold.text-warning#sloMttrVal 0
+            span.badge.badge-success.apple-btn-pill Target: 99.9% Availability
+          .row.text-center.mt-3
+            .col-md-3.col-6.border-right.border-secondary
+              span.d-block.x-small.text-muted AVAILABILITY UPTIME
+              span.h3.font-weight-bold.text-success#sloAvailabilityVal 99.94%
+            .col-md-3.col-6.border-right.border-secondary
+              span.d-block.x-small.text-muted SYNTHETIC LATENCY
+              span.h3.font-weight-bold.text-info#synthP95Val 18ms
+            .col-md-3.col-6.border-right.border-secondary
+              span.d-block.x-small.text-muted ERROR BUDGET
+              span.h3.font-weight-bold.text-primary#sloBudgetVal 98.2%
+            .col-md-3.col-6
+              span.d-block.x-small.text-muted DISRUPTION COUNT
+              span.h3.font-weight-bold.text-warning#sloMttrVal 0
 
         .row
           .col-md-6.mb-4
-            .card.bg-dark-card.text-white.h-100
-              .card-header.d-flex.justify-content-between.align-items-center
+            .apple-card.h-100
+              .d-flex.justify-content-between.align-items-center.mb-3
                 span.font-weight-bold
                   i.fas.fa-heartbeat.text-danger.mr-2
                   span Liveness Probe (/health)
                 span.badge#livenessBadge.badge-success Healthy
-              .card-body
-                p.card-text.small.text-muted Controls application instance health status returned to Kubernetes pod probes.
-                .mb-3
-                  span.d-block.x-small.text-muted PROBE RESPONSE:
-                  code.d-block.p-2.bg-black.rounded#livenessResponseJson Loading...
-                .d-flex
-                  button.btn.btn-danger.btn-block.mr-2#btnBreakApp
-                    i.fas.fa-skull.mr-2
-                    span Inject Failure (/break)
-                  button.btn.btn-success.btn-block.mt-0#btnRestoreApp
-                    i.fas.fa-check-circle.mr-2
-                    span Restore Health (/restore)
+              p.x-small.text-muted Controls application instance health status returned to Kubernetes pod probes.
+              .mb-3
+                span.d-block.x-small.text-muted PROBE RESPONSE:
+                code.d-block.p-2.bg-black.rounded#livenessResponseJson Loading...
+              .d-flex
+                button.btn.btn-danger.btn-block.mr-2.apple-btn-pill#btnBreakApp
+                  i.fas.fa-skull.mr-2
+                  span Inject Failure (/break)
+                button.btn.btn-success.btn-block.mt-0.apple-btn-pill#btnRestoreApp
+                  i.fas.fa-check-circle.mr-2
+                  span Restore Health (/restore)
 
           .col-md-6.mb-4
-            .card.bg-dark-card.text-white.h-100
-              .card-header.d-flex.justify-content-between.align-items-center
+            .apple-card.h-100
+              .d-flex.justify-content-between.align-items-center.mb-3
                 span.font-weight-bold
                   i.fas.fa-microchip.text-info.mr-2
                   span HPA Stress Tester (/generate-cpu-load)
-                span.badge.badge-info Autoscaling Test
-              .card-body
-                p.card-text.small.text-muted Triggers intensive CPU loop calculations to test Kubernetes Horizontal Pod Autoscaling (HPA).
-                .mb-3
-                  span.d-block.x-small.text-muted EXECUTION RESULT:
-                  code.d-block.p-2.bg-black.rounded#cpuResultJson Ready to test...
-                button.btn.btn-warning.btn-block#btnCpuStress
-                  i.fas.fa-bolt.mr-2
-                  span Run CPU Load Test
+                span.badge.badge-info.apple-btn-pill Autoscaling Test
+              p.x-small.text-muted Triggers intensive CPU loop calculations to test Kubernetes Horizontal Pod Autoscaling (HPA).
+              .mb-3
+                span.d-block.x-small.text-muted EXECUTION RESULT:
+                code.d-block.p-2.bg-black.rounded#cpuResultJson Ready to test...
+              button.btn.btn-warning.btn-block.apple-btn-pill#btnCpuStress
+                i.fas.fa-bolt.mr-2
+                span Run CPU Load Test
 
         .row
           .col-12
-            .card.bg-dark-card.text-white
-              .card-header
+            .apple-card
+              .d-flex.align-items-center.mb-2
                 i.fas.fa-terminal.mr-2.text-warning
-                span Real-Time Probe Log Monitor
-              .card-body
-                pre.p-3.bg-black.text-success.rounded.small.mb-0#sreLogTerminal(style="height: 160px; overflow-y: auto;") System initialized. Monitoring metrics...
+                span.font-weight-bold Real-Time Probe Log Monitor
+              pre.p-3.bg-black.text-success.rounded.small.mb-0#sreLogTerminal(style="height: 160px; overflow-y: auto;") System initialized. Monitoring metrics...
 
   // ==========================================
-  // MODALS
+  // MODALS (Apple Styling)
   // ==========================================
 
   // Staff Login Modal (Passcode: 8899)
   .modal.fade#operatorAuthModal(tabindex="-1", role="dialog", aria-hidden="true")
     .modal-dialog.modal-dialog-centered(role="document")
-      .modal-content.bg-dark-modal.text-white
-        .modal-header
-          h5.modal-title
+      .modal-content.apple-modal.text-white
+        .modal-header.border-0.pb-0
+          h5.modal-title.font-weight-bold
             i.fas.fa-user-shield.mr-2.text-warning
             span Staff Mode Sign In
           button.close.text-white(type="button", data-dismiss="modal") &times;
-        .modal-body
+        .modal-body.py-4
           p.small.text-muted Enter your Staff Passcode to unlock Dispatcher Operations & System Health controls.
           form#operatorAuthForm
-            .form-group
-              label.small.text-muted Enter Passcode (Default: 8899)
-              input.form-control.bg-dark-input.text-white#operatorPinInput(type="password", placeholder="Enter Passcode", required)
+            .form-group.mb-0
+              label.x-small.text-muted PASSCODE (DEFAULT: 8899)
+              input.form-control.apple-modal-input#operatorPinInput(type="password", placeholder="Enter Passcode", required)
               .invalid-feedback#authErrorMsg Invalid passcode. Access denied.
-        .modal-footer
-          button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
-          button.btn.btn-primary#btnSubmitAuth(type="button") Authenticate
+        .modal-footer.border-0.pt-0
+          button.btn.btn-secondary.apple-btn-pill(type="button", data-dismiss="modal") Cancel
+          button.btn.btn-primary.apple-btn-pill#btnSubmitAuth(type="button") Authenticate
 
   // Passenger Alert Subscription Modal
   .modal.fade#subscribeModal(tabindex="-1", role="dialog", aria-hidden="true")
     .modal-dialog.modal-dialog-centered(role="document")
-      .modal-content.bg-dark-modal.text-white
-        .modal-header
-          h5.modal-title
+      .modal-content.apple-modal.text-white
+        .modal-header.border-0.pb-0
+          h5.modal-title.font-weight-bold
             i.fas.fa-bell.mr-2.text-warning
             span Subscribe to Delay Alerts
           button.close.text-white(type="button", data-dismiss="modal") &times;
-        .modal-body
+        .modal-body.py-4
           form#subscribeForm
             .form-group
-              label.small.text-muted Email Address
-              input.form-control.bg-dark-input.text-white#subEmail(type="email", placeholder="commuter@example.com", required)
+              label.x-small.text-muted EMAIL ADDRESS
+              input.form-control.apple-modal-input#subEmail(type="email", placeholder="commuter@example.com", required)
             .form-group
-              label.small.text-muted Select Train Schedule
-              select.form-control.bg-dark-input.text-white#subTrainId
+              label.x-small.text-muted SELECT TRAIN SCHEDULE
+              select.form-control.apple-modal-input#subTrainId
                 option(value="ALL") All Trains & Disruption Alerts
                 option(value="TR-101") Hogwarts Express (EXP-101)
                 option(value="TR-102") Flying Scotsman (EXP-204)
                 option(value="TR-103") Orient Express (EXP-309)
                 option(value="TR-104") Golden Arrow (EXP-412)
-            .form-group
-              label.small.text-muted Alert Threshold
-              select.form-control.bg-dark-input.text-white#subThreshold
+            .form-group.mb-0
+              label.x-small.text-muted ALERT THRESHOLD
+              select.form-control.apple-modal-input#subThreshold
                 option(value="0") Any Delay or Platform Change
                 option(value="5") Delay > 5 minutes
                 option(value="15") Delay > 15 minutes
-        .modal-footer
-          button.btn.btn-secondary(type="button", data-dismiss="modal") Close
-          button.btn.btn-warning#btnSaveSubscribe(type="button") Enable Alerts
+        .modal-footer.border-0.pt-0
+          button.btn.btn-secondary.apple-btn-pill(type="button", data-dismiss="modal") Close
+          button.btn.btn-warning.apple-btn-pill#btnSaveSubscribe(type="button") Enable Alerts
 
   // Dispatch Edit Modal
   .modal.fade#dispatchModal(tabindex="-1", role="dialog", aria-hidden="true")
     .modal-dialog.modal-dialog-centered(role="document")
-      .modal-content.bg-dark-modal.text-white
-        .modal-header
-          h5.modal-title
+      .modal-content.apple-modal.text-white
+        .modal-header.border-0.pb-0
+          h5.modal-title.font-weight-bold
             i.fas.fa-edit.mr-2.text-primary
             span Dispatcher Update: 
             span#modalTrainTitle
           button.close.text-white(type="button", data-dismiss="modal") &times;
-        .modal-body
+        .modal-body.py-4
           form#dispatchForm
             input(type="hidden", id="dispatchTrainId")
             .form-group
-              label.small.text-muted Status
-              select.form-control.bg-dark-input.text-white#dispatchStatus
+              label.x-small.text-muted STATUS
+              select.form-control.apple-modal-input#dispatchStatus
                 option(value="ON-TIME") ON-TIME
                 option(value="DELAYED") DELAYED
                 option(value="CANCELLED") CANCELLED
             .form-row
               .form-group.col-md-6
-                label.small.text-muted Delay Minutes
-                input.form-control.bg-dark-input.text-white#dispatchDelayMins(type="number", min="0", value="0")
+                label.x-small.text-muted DELAY MINUTES
+                input.form-control.apple-modal-input#dispatchDelayMins(type="number", min="0", value="0")
               .form-group.col-md-6
-                label.small.text-muted Platform
-                input.form-control.bg-dark-input.text-white#dispatchPlatform(type="text", placeholder="e.g. Platform 2")
-            .form-group
-              label.small.text-muted Disruption Reason
-              select.form-control.bg-dark-input.text-white.mb-2#dispatchPresetReason
+                label.x-small.text-muted PLATFORM
+                input.form-control.apple-modal-input#dispatchPlatform(type="text", placeholder="e.g. Platform 2")
+            .form-group.mb-0
+              label.x-small.text-muted DISRUPTION REASON
+              select.form-control.apple-modal-input.mb-2#dispatchPresetReason
                 option(value="None") None (On-Time)
                 option(value="Signaling Fault at Station Junction") Signaling Fault at Station Junction
                 option(value="Mechanical & Brake Inspection") Mechanical & Brake Inspection
                 option(value="Track Maintenance & Debris Clear") Track Maintenance & Debris Clear
                 option(value="Platform Overcrowding & Reassignment") Platform Overcrowding & Reassignment
                 option(value="Custom") Custom Reason...
-              input.form-control.bg-dark-input.text-white#dispatchCustomReason(type="text", placeholder="Type custom disruption reason...", style="display:none;")
-        .modal-footer
-          button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
-          button.btn.btn-primary#btnSaveDispatch(type="button") Broadcast Update
+              input.form-control.apple-modal-input#dispatchCustomReason(type="text", placeholder="Type custom disruption reason...", style="display:none;")
+        .modal-footer.border-0.pt-0
+          button.btn.btn-secondary.apple-btn-pill(type="button", data-dismiss="modal") Cancel
+          button.btn.btn-primary.apple-btn-pill#btnSaveDispatch(type="button") Broadcast Update
 
   // Add Train Modal
   .modal.fade#addTrainModal(tabindex="-1", role="dialog", aria-hidden="true")
     .modal-dialog.modal-dialog-centered(role="document")
-      .modal-content.bg-dark-modal.text-white
-        .modal-header
-          h5.modal-title
+      .modal-content.apple-modal.text-white
+        .modal-header.border-0.pb-0
+          h5.modal-title.font-weight-bold
             i.fas.fa-plus-circle.mr-2.text-success
             span Add Train Schedule
           button.close.text-white(type="button", data-dismiss="modal") &times;
-        .modal-body
+        .modal-body.py-4
           form#addTrainForm
             .form-group
-              label.small.text-muted Train Name
-              input.form-control.bg-dark-input.text-white#newTrainName(type="text", placeholder="e.g. Bullet Express", required)
+              label.x-small.text-muted TRAIN NAME
+              input.form-control.apple-modal-input#newTrainName(type="text", placeholder="e.g. Bullet Express", required)
             .form-row
               .form-group.col-md-6
-                label.small.text-muted Train Number
-                input.form-control.bg-dark-input.text-white#newTrainNum(type="text", placeholder="e.g. EXP-702")
+                label.x-small.text-muted TRAIN NUMBER
+                input.form-control.apple-modal-input#newTrainNum(type="text", placeholder="e.g. EXP-702")
               .form-group.col-md-6
-                label.small.text-muted Platform
-                input.form-control.bg-dark-input.text-white#newPlatform(type="text", placeholder="e.g. Platform 1")
+                label.x-small.text-muted PLATFORM
+                input.form-control.apple-modal-input#newPlatform(type="text", placeholder="e.g. Platform 1")
             .form-row
               .form-group.col-md-6
-                label.small.text-muted Origin
-                input.form-control.bg-dark-input.text-white#newOrigin(type="text", placeholder="e.g. Sycamore Station")
+                label.x-small.text-muted ORIGIN
+                input.form-control.apple-modal-input#newOrigin(type="text", placeholder="e.g. Sycamore Station")
               .form-group.col-md-6
-                label.small.text-muted Destination
-                input.form-control.bg-dark-input.text-white#newDest(type="text", placeholder="e.g. Cypress Terminal")
-            .form-group
-              label.small.text-muted Scheduled Departure Time
-              input.form-control.bg-dark-input.text-white#newScheduledTime(type="text", placeholder="e.g. 04:15 PM", required)
-        .modal-footer
-          button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
-          button.btn.btn-success#btnAddTrainSave(type="button") Save Schedule
+                label.x-small.text-muted DESTINATION
+                input.form-control.apple-modal-input#newDest(type="text", placeholder="e.g. Cypress Terminal")
+            .form-group.mb-0
+              label.x-small.text-muted SCHEDULED DEPARTURE TIME
+              input.form-control.apple-modal-input#newScheduledTime(type="text", placeholder="e.g. 04:15 PM", required)
+        .modal-footer.border-0.pt-0
+          button.btn.btn-secondary.apple-btn-pill(type="button", data-dismiss="modal") Cancel
+          button.btn.btn-success.apple-btn-pill#btnAddTrainSave(type="button") Save Schedule

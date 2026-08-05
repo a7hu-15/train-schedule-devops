@@ -1,4 +1,4 @@
-// RailPulse Client Engine - Real-Time WebSockets, Pure-Software Innovations & SRE Engine
+// RailPulse Client Engine - Apple SF Pro Design System Engine
 
 var allTrainsData = [];
 var activeStationFilter = "";
@@ -7,7 +7,7 @@ var socket = null;
 var isOperatorAuthed = false;
 var operatorToken = "";
 var subscribedAlerts = [];
-var syntheticProbeLatencies = [15, 18, 12, 22, 16];
+var syntheticProbeLatencies = [14, 18, 12, 16, 15];
 
 $(document).ready(function() {
   isOperatorAuthed = sessionStorage.getItem('operator_authed') === 'true';
@@ -22,7 +22,6 @@ $(document).ready(function() {
   fetchTrainsData();
   fetchSreHealth();
   fetchSreSlo();
-  fetchAnalyticsHistory();
 
   setInterval(fetchTrainsData, 6000);
   setInterval(fetchSreHealth, 4000);
@@ -41,10 +40,6 @@ $(document).ready(function() {
     renderCommuterBoard();
   });
 
-  $('#analytics-tab').on('click', function() {
-    fetchAnalyticsHistory();
-  });
-
   $('#operator-tab').on('click', function() {
     if (isOperatorAuthed) fetchAuditLogs();
   });
@@ -59,15 +54,6 @@ $(document).ready(function() {
     checkOperatorAuth();
   });
   $('#btnStaffLogout').on('click', lockOperatorDesk);
-
-  // Feature 1: Send GPS Telemetry
-  $('#btnSendGpsPing').on('click', submitGpsTelemetry);
-
-  // Feature 3: Submit Coach Density Rating
-  $('#btnSubmitCrowdDensity').on('click', submitCoachDensity);
-
-  // Feature 4: Multi-Region Disaster Recovery Failover
-  $('#btnToggleFailover').on('click', triggerRegionFailover);
 
   $('#dispatchPresetReason').on('change', function() {
     if ($(this).val() === 'Custom') {
@@ -129,15 +115,6 @@ function initWebSocket() {
         if (isOperatorAuthed) fetchAuditLogs();
       });
 
-      socket.on('gps_updated', function(ping) {
-        logSreTerminal('📍 Crowdsourced GPS telemetry received for train ' + ping.trainNumber + ' (' + ping.speedKmh + ' km/h)');
-      });
-
-      socket.on('density_updated', function(res) {
-        logSreTerminal('👥 Crowdsourced coach crowding updated for train ' + res.trainId + ': ' + res.density);
-        fetchTrainsData();
-      });
-
       socket.on('disconnect', function() {
         logSreTerminal('WebSocket disconnected. Falling back to HTTP polling.');
       });
@@ -165,138 +142,6 @@ function fetchTrainsData() {
   });
 }
 
-// Feature 1: Submit Crowdsourced GPS Telemetry
-function submitGpsTelemetry() {
-  var trainId = $('#gpsTrainId').val();
-  var speed = parseInt($('#gpsSpeedInput').val(), 10) || 75;
-
-  $.ajax({
-    url: '/api/v1/telemetry/gps',
-    type: 'POST',
-    contentType: 'application/json',
-    data: JSON.stringify({ trainId: trainId, speed: speed }),
-    success: function(res) {
-      $('#gpsModal').modal('hide');
-      showToastNotification('success', '📍 Transmitted crowdsourced GPS ping for ' + trainId + ' (' + speed + ' km/h)');
-      logSreTerminal('Transmitted GPS telemetry for ' + trainId);
-    },
-    error: function(err) {
-      alert('Error transmitting GPS ping.');
-    }
-  });
-}
-
-// Feature 2: Fetch GTFS Historical Data Lake & Analytics
-function fetchAnalyticsHistory() {
-  $.getJSON('/api/v1/analytics/history', function(data) {
-    if (data) {
-      renderRouteGrades(data.routeReliabilityGrades || []);
-      renderHistoryLogsTable(data.recentHistory || []);
-    }
-  }).fail(function(err) {
-    console.warn('Analytics history fetch error');
-  });
-}
-
-function renderRouteGrades(grades) {
-  if (grades.length === 0) {
-    $('#routeGradesContainer').html('<div class="col-12 text-center text-muted">No route grades generated yet.</div>');
-    return;
-  }
-
-  var html = '';
-  grades.forEach(function(g) {
-    var gradeColor = 'badge-success';
-    if (g.grade === 'B') gradeColor = 'badge-info';
-    else if (g.grade === 'C') gradeColor = 'badge-warning';
-    else if (g.grade === 'D' || g.grade === 'F') gradeColor = 'badge-danger';
-
-    html += '<div class="col-md-6 col-lg-3 mb-3">';
-    html += '  <div class="card bg-black border-secondary p-3 text-white h-100 text-center">';
-    html += '    <span class="small text-muted mb-1">' + (g.trainNumber || 'EXP') + ' - ' + g.name + '</span>';
-    html += '    <div class="my-2"><span class="badge ' + gradeColor + ' p-2 font-weight-bold" style="font-size: 1.4rem;">Grade ' + g.grade + '</span></div>';
-    html += '    <span class="x-small text-muted">On-Time Performance: <strong class="text-white">' + g.onTimePercentage + '%</strong></span>';
-    html += '  </div>';
-    html += '</div>';
-  });
-
-  $('#routeGradesContainer').html(html);
-}
-
-function renderHistoryLogsTable(logs) {
-  if (logs.length === 0) {
-    $('#historyLogsTableBody').html('<tr><td colspan="5" class="text-center text-muted">No historical incident logs archived yet.</td></tr>');
-    return;
-  }
-
-  var html = '';
-  logs.forEach(function(l) {
-    var timeStr = new Date(l.timestamp).toLocaleTimeString();
-    var statusBadge = 'badge-success';
-    if (l.status === 'DELAYED') statusBadge = 'badge-warning';
-    else if (l.status === 'CANCELLED') statusBadge = 'badge-danger';
-
-    html += '<tr>';
-    html += '  <td class="x-small text-muted">' + timeStr + '</td>';
-    html += '  <td class="font-weight-bold text-info">' + (l.trainNumber || l.trainId) + '</td>';
-    html += '  <td><span class="badge ' + statusBadge + '">' + l.status + '</span></td>';
-    html += '  <td>' + (l.delayMinutes > 0 ? '+' + l.delayMinutes + ' mins' : '-') + '</td>';
-    html += '  <td class="small text-muted">' + (l.station || 'Main Route Segment') + '</td>';
-    html += '</tr>';
-  });
-
-  $('#historyLogsTableBody').html(html);
-}
-
-// Feature 3: Open Crowding Modal & Submit Crowdsourced Density Rating
-function openCrowdModal(trainId) {
-  $('#crowdTrainId').val(trainId);
-  $('#crowdModal').modal('show');
-}
-
-function submitCoachDensity() {
-  var trainId = $('#crowdTrainId').val();
-  var density = $('#crowdDensitySelect').val();
-
-  $.ajax({
-    url: '/api/v1/crowdsource/density',
-    type: 'POST',
-    contentType: 'application/json',
-    data: JSON.stringify({ trainId: trainId, density: density }),
-    success: function(res) {
-      $('#crowdModal').modal('hide');
-      showToastNotification('success', '👥 Crowdsourced density submitted: ' + density + ' for train ' + trainId);
-      fetchTrainsData();
-    },
-    error: function(err) {
-      alert('Error submitting crowding rating.');
-    }
-  });
-}
-
-// Feature 4: DevOps Multi-Region Disaster Recovery Failover Trigger
-function triggerRegionFailover() {
-  if (!isOperatorAuthed) {
-    $('#operatorAuthModal').modal('show');
-    return;
-  }
-
-  $.ajax({
-    url: '/api/v1/sre/disaster-recovery/failover',
-    type: 'POST',
-    headers: getAuthHeaders(),
-    success: function(res) {
-      fetchSreSlo();
-      showToastNotification('warning', '🌐 DEVOPS FAILOVER TRIGGERED: Active Region is now ' + res.status.activeRegion);
-      logSreTerminal('🌐 Multi-Region failover executed -> ' + res.status.activeRegion);
-    },
-    error: function(xhr) {
-      if (xhr.status === 401) $('#operatorAuthModal').modal('show');
-    }
-  });
-}
-
-// Feature 5: Synthetic Endpoint Performance Probe Engine
 function runSyntheticProbes() {
   var start = Date.now();
   $.getJSON('/api/v1/trains', function() {
@@ -316,13 +161,7 @@ function fetchSreSlo() {
     if (slo) {
       $('#sloAvailabilityVal').text((slo.currentAvailabilityPercent || 99.9) + '%');
       $('#sloBudgetVal').text((slo.errorBudgetRemainingPercent || 100) + '%');
-
-      if (slo.activeCloudRegion) {
-        $('#mrActiveRegionText').text(slo.activeCloudRegion);
-        $('#mrStatusBadge').text('Active Region: ' + slo.activeCloudRegion.split(' ')[0]);
-      }
-
-      $('#sloMttrVal').text((slo.mttrSeconds || 0) + 's');
+      $('#sloMttrVal').text((slo.activeDisruptions || 0));
     }
   }).fail(function(err) {
     console.warn('SLO fetch error');
@@ -405,12 +244,12 @@ function renderAuditLogsTable(logs) {
     var actionBadge = 'badge-secondary';
     if (l.action.indexOf('UPDATE') !== -1) actionBadge = 'badge-info';
     else if (l.action.indexOf('CREATE') !== -1) actionBadge = 'badge-success';
-    else if (l.action.indexOf('DELETE') !== -1 || l.action.indexOf('CHAOS') !== -1 || l.action.indexOf('FAILOVER') !== -1) actionBadge = 'badge-warning';
+    else if (l.action.indexOf('DELETE') !== -1 || l.action.indexOf('CHAOS') !== -1) actionBadge = 'badge-warning';
     else if (l.action.indexOf('FAILURE') !== -1) actionBadge = 'badge-danger';
 
     html += '<tr>';
     html += '  <td class="x-small text-muted">' + timeStr + '</td>';
-    html += '  <td><span class="badge ' + actionBadge + '">' + l.action + '</span></td>';
+    html += '  <td><span class="badge ' + actionBadge + '" style="border-radius: 8px;">' + l.action + '</span></td>';
     html += '  <td class="small text-white">' + l.details + '</td>';
     html += '  <td class="x-small text-muted">' + l.userRole + '</td>';
     html += '</tr>';
@@ -431,7 +270,7 @@ function submitAlertSubscription() {
 
   subscribedAlerts.push({ email: email, trainId: trainId, threshold: threshold });
   $('#subscribeModal').modal('hide');
-  showToastNotification('success', '🔔 Subscribed! You will receive live alerts for ' + (trainId === 'ALL' ? 'All Trains' : trainId) + ' at ' + email);
+  showToastNotification('success', '🔔 Subscribed! Alerts enabled for ' + (trainId === 'ALL' ? 'All Schedules' : trainId) + ' at ' + email);
   logSreTerminal('Passenger subscribed to delay alerts: ' + email);
 }
 
@@ -453,7 +292,7 @@ function checkPassengerAlertTriggers() {
 
 function showToastNotification(type, message) {
   var alertClass = type === 'success' ? 'alert-success' : 'alert-warning';
-  var html = '<div class="alert ' + alertClass + ' alert-dismissible fade show shadow" role="alert">' +
+  var html = '<div class="alert ' + alertClass + ' alert-dismissible fade show shadow" style="border-radius: 16px;" role="alert">' +
              '  <strong>' + message + '</strong>' +
              '  <button type="button" class="close" data-dismiss="alert">&times;</button>' +
              '</div>';
@@ -468,9 +307,9 @@ function renderRouteMap() {
 
   var html = '';
   allTrainsData.forEach(function(t) {
-    var statusBadge = 'status-badge-' + t.status;
+    var statusBadge = 'apple-status-' + t.status;
     html += '<div class="col-md-6 col-lg-4 mb-3">';
-    html += '  <div class="card bg-black border-secondary p-3 text-white h-100">';
+    html += '  <div class="apple-card p-3 text-white h-100">';
     html += '    <div class="d-flex justify-content-between align-items-center mb-2">';
     html += '      <span class="font-weight-bold text-info"><i class="fas fa-train mr-1"></i> ' + t.name + '</span>';
     html += '      <span class="' + statusBadge + '">' + t.status + '</span>';
@@ -478,7 +317,7 @@ function renderRouteMap() {
     html += '    <p class="x-small text-muted mb-2">Route: ' + (t.origin || 'Sycamore') + ' &rarr; ' + (t.destination || 'Hickory') + '</p>';
     html += '    <div class="d-flex justify-content-between align-items-center x-small">';
     html += '      <span><i class="fas fa-clock mr-1 text-muted"></i> Sched: ' + t.scheduledTime + '</span>';
-    html += '      <span class="platform-pill">' + (t.platform || 'Platform 1') + '</span>';
+    html += '      <span class="apple-platform-pill">' + (t.platform || 'Platform 1') + '</span>';
     html += '    </div>';
     html += '  </div>';
     html += '</div>';
@@ -529,59 +368,54 @@ function renderCommuterBoard() {
 
   var html = '';
   filtered.forEach(function(t) {
-    var statusClass = 'status-badge-' + t.status;
+    var statusClass = 'apple-status-' + t.status;
     var isDelayed = (t.status === 'DELAYED');
     var isCancelled = (t.status === 'CANCELLED');
-    var densityBadge = 'badge-success';
-    var densityText = t.coachDensity || 'Low';
-    if (densityText === 'Moderate') densityBadge = 'badge-warning';
-    else if (densityText === 'Heavy' || densityText === 'Overcrowded') densityBadge = 'badge-danger';
 
     html += '<div class="col-md-6 col-lg-4 mb-4">';
-    html += '  <div class="train-card d-flex flex-column justify-content-between">';
+    html += '  <div class="apple-card d-flex flex-column justify-content-between">';
     html += '    <div>';
-    html += '      <div class="d-flex justify-content-between align-items-start mb-2">';
+    html += '      <div class="d-flex justify-content-between align-items-center mb-3">';
     html += '        <div>';
-    html += '          <span class="badge badge-secondary mr-2">' + (t.trainNumber || 'EXP') + '</span>';
-    html += '          <span class="platform-pill mr-2">' + (t.platform || 'Platform 1') + '</span>';
-    html += '          <span class="badge ' + densityBadge + '"><i class="fas fa-users mr-1"></i>' + densityText + '</span>';
+    html += '          <span class="badge badge-secondary mr-2" style="border-radius: 8px;">' + (t.trainNumber || 'EXP') + '</span>';
+    html += '          <span class="apple-platform-pill">' + (t.platform || 'Platform 1') + '</span>';
     html += '        </div>';
     html += '        <span class="' + statusClass + '">' + t.status + '</span>';
     html += '      </div>';
-    html += '      <h5 class="text-white font-weight-bold mb-1">' + t.name + '</h5>';
-    html += '      <p class="small text-muted mb-3"><i class="fas fa-route mr-1"></i> ' + (t.origin || 'Main Terminal') + ' &rarr; ' + (t.destination || 'Central') + '</p>';
+
+    html += '      <h5 class="text-white font-weight-bold mb-1 letter-spacing-tight">' + t.name + '</h5>';
+    html += '      <p class="x-small text-muted mb-3"><i class="fas fa-route mr-1 text-info"></i> ' + (t.origin || 'Main Terminal') + ' &rarr; ' + (t.destination || 'Central') + '</p>';
     
-    html += '      <div class="row text-center bg-black p-2 rounded mb-3">';
+    html += '      <div class="row text-center p-3 rounded mb-3" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.06);">';
     html += '        <div class="col-6 border-right border-secondary">';
-    html += '          <span class="d-block x-small text-muted">SCHEDULED</span>';
-    html += '          <span class="text-white font-weight-bold">' + t.scheduledTime + '</span>';
+    html += '          <span class="d-block x-small text-muted letter-spacing-wide">SCHEDULED</span>';
+    html += '          <span class="text-white font-weight-bold h6 mb-0">' + t.scheduledTime + '</span>';
     html += '        </div>';
     html += '        <div class="col-6">';
-    html += '          <span class="d-block x-small text-muted">ESTIMATED</span>';
+    html += '          <span class="d-block x-small text-muted letter-spacing-wide">ESTIMATED</span>';
     if (isDelayed) {
-      html += '        <span class="text-warning font-weight-bold">' + (t.estimatedTime || t.scheduledTime) + ' (+' + t.delayMinutes + 'm)</span>';
+      html += '        <span class="text-warning font-weight-bold h6 mb-0">' + (t.estimatedTime || t.scheduledTime) + ' <small>(+' + t.delayMinutes + 'm)</small></span>';
     } else if (isCancelled) {
-      html += '        <span class="text-danger font-weight-bold">CANCELLED</span>';
+      html += '        <span class="text-danger font-weight-bold h6 mb-0">CANCELLED</span>';
     } else {
-      html += '        <span class="text-success font-weight-bold">' + t.scheduledTime + '</span>';
+      html += '        <span class="text-success font-weight-bold h6 mb-0">' + t.scheduledTime + '</span>';
     }
     html += '        </div>';
     html += '      </div>';
 
     if ((isDelayed || isCancelled) && t.delayReason && t.delayReason !== 'None') {
-      html += '    <div class="disruption-banner mb-2">';
+      html += '    <div class="apple-disruption-callout mb-3">';
       html += '      <i class="fas fa-exclamation-triangle text-warning mr-2"></i>';
       html += '      <span>' + t.delayReason + '</span>';
       html += '    </div>';
     }
     html += '    </div>';
 
-    html += '    <div class="pt-2 border-top border-secondary d-flex justify-content-between align-items-center">';
-    html += '      <button class="btn btn-outline-warning btn-sm" onclick="openCrowdModal(\'' + t.id + '\')"><i class="fas fa-users mr-1"></i> Report Crowding</button>';
     if (isOperatorAuthed) {
-      html += '    <button class="btn btn-outline-info btn-sm" onclick="openDispatchModal(\'' + t.id + '\')"><i class="fas fa-edit mr-1"></i> Dispatch Edit</button>';
+      html += '  <div class="pt-2 border-top border-secondary text-right">';
+      html += '    <button class="btn btn-outline-info apple-btn-pill btn-sm" onclick="openDispatchModal(\'' + t.id + '\')"><i class="fas fa-edit mr-1"></i> Edit Dispatch</button>';
+      html += '  </div>';
     }
-    html += '    </div>';
 
     html += '  </div>';
     html += '</div>';
@@ -598,19 +432,19 @@ function renderOperatorTable() {
 
   var html = '';
   allTrainsData.forEach(function(t) {
-    var statusClass = 'status-badge-' + t.status;
+    var statusClass = 'apple-status-' + t.status;
     html += '<tr>';
-    html += '  <td><span class="badge badge-secondary">' + (t.trainNumber || 'EXP') + '</span></td>';
+    html += '  <td><span class="badge badge-secondary" style="border-radius: 8px;">' + (t.trainNumber || 'EXP') + '</span></td>';
     html += '  <td class="font-weight-bold text-white">' + t.name + '</td>';
     html += '  <td class="small text-muted">' + (t.origin || 'Main') + ' &rarr; ' + (t.destination || 'Central') + '</td>';
     html += '  <td>' + t.scheduledTime + '</td>';
-    html += '  <td><span class="platform-pill">' + (t.platform || 'Platform 1') + '</span></td>';
+    html += '  <td><span class="apple-platform-pill">' + (t.platform || 'Platform 1') + '</span></td>';
     html += '  <td><span class="' + statusClass + '">' + t.status + '</span></td>';
     html += '  <td>' + (t.delayMinutes > 0 ? '+' + t.delayMinutes + ' mins' : '-') + '</td>';
     html += '  <td class="small text-muted">' + (t.delayReason || 'None') + '</td>';
     html += '  <td>';
-    html += '    <button class="btn btn-primary btn-sm mr-1" onclick="openDispatchModal(\'' + t.id + '\')"><i class="fas fa-edit"></i> Edit</button>';
-    html += '    <button class="btn btn-danger btn-sm" onclick="deleteTrain(\'' + t.id + '\')"><i class="fas fa-trash"></i></button>';
+    html += '    <button class="btn btn-primary apple-btn-pill btn-sm mr-1" onclick="openDispatchModal(\'' + t.id + '\')"><i class="fas fa-edit"></i> Edit</button>';
+    html += '    <button class="btn btn-danger apple-btn-pill btn-sm" onclick="deleteTrain(\'' + t.id + '\')"><i class="fas fa-trash"></i></button>';
     html += '  </td>';
     html += '</tr>';
   });
@@ -684,7 +518,6 @@ function submitDispatchUpdate() {
       showToastNotification('success', '✅ Train schedule updated successfully!');
       fetchAuditLogs();
       fetchSreSlo();
-      fetchAnalyticsHistory();
     },
     error: function(xhr) {
       if (xhr.status === 401) {
@@ -738,7 +571,6 @@ function submitAddTrain() {
       showToastNotification('success', '✅ Added new schedule: ' + name);
       fetchAuditLogs();
       fetchSreSlo();
-      fetchAnalyticsHistory();
     },
     error: function(xhr) {
       if (xhr.status === 401) {
@@ -768,7 +600,6 @@ function deleteTrain(id) {
       showToastNotification('success', '🗑️ Train schedule removed: ' + id);
       fetchAuditLogs();
       fetchSreSlo();
-      fetchAnalyticsHistory();
     },
     error: function(xhr) {
       if (xhr.status === 401) {
