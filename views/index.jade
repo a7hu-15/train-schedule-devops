@@ -1,13 +1,226 @@
 extends layout
 
 block content
-  h1 Find your train!
-  p Select your train below to see its current schedule.
-  #wrapper
-    #trainList
-      h2 Trains
-      #trains.d-flex.flex-row
-    #trainInfo
-      strong  <span id='trainName'></span>
-      #trainSchedule
-        strong Select a train to view its current schedule.
+  .app-container
+    // Header & Navigation
+    header.main-header.d-flex.justify-content-between.align-items-center
+      .brand-title
+        i.fas.fa-train.text-warning.mr-2
+        span.font-weight-bold.text-white RailPulse
+        span.badge.badge-pill.badge-primary.ml-2.align-middle Live Transit Ops
+      
+      ul.nav.nav-pills.main-nav#mainTabs(role="tablist")
+        li.nav-item
+          a.nav-link.active#commuter-tab(data-toggle="tab", href="#commuter-view", role="tab")
+            i.fas.fa-clock.mr-2
+            span Commuter Board
+        li.nav-item
+          a.nav-link#operator-tab(data-toggle="tab", href="#operator-view", role="tab")
+            i.fas.fa-sliders-h.mr-2
+            span Operator Desk
+        li.nav-item
+          a.nav-link#sre-tab(data-toggle="tab", href="#sre-view", role="tab")
+            i.fas.fa-shield-alt.mr-2
+            span SRE Chaos Room
+
+      .system-time-badge.text-right
+        span.d-block.small.text-muted REAL-TIME DISRUPTION FEED
+        span.font-weight-bold.text-success#liveClock --:--:--
+
+    // Alert Banner
+    #globalAlertContainer
+
+    // Tab Contents
+    .tab-content.mt-4#tabContent
+      // ==========================================
+      // TAB 1: COMMUTER LIVE BOARD
+      // ==========================================
+      .tab-pane.fade.show.active#commuter-view(role="tabpanel")
+        .row.mb-4.align-items-center
+          .col-md-6
+            .search-box.position-relative
+              i.fas.fa-search.search-icon
+              input.form-control.search-input#commuterSearch(type="text", placeholder="Search by station, train name, or train number (e.g. Sycamore, EXP-101)...")
+          .col-md-6.text-md-right.mt-2.mt-md-0
+            span.small.text-muted.mr-2 Filter by Station:
+            .btn-group.btn-group-sm.station-filter-group(role="group")
+              button.btn.btn-outline-secondary.active(data-station="") All
+              button.btn.btn-outline-secondary(data-station="Sycamore") Sycamore
+              button.btn.btn-outline-secondary(data-station="Pine") Pine
+              button.btn.btn-outline-secondary(data-station="Cypress") Cypress
+              button.btn.btn-outline-secondary(data-station="Hickory") Hickory
+
+        .disruption-summary.mb-4.p-3.rounded.bg-dark-card
+          .row.text-center
+            .col-md-3.col-6.border-right.border-secondary
+              span.d-block.small.text-muted TOTAL TRAINS
+              span.h4.font-weight-bold.text-white#totalTrainsCount 0
+            .col-md-3.col-6.border-right.border-secondary
+              span.d-block.small.text-muted ON TIME
+              span.h4.font-weight-bold.text-success#onTimeCount 0
+            .col-md-3.col-6.border-right.border-secondary
+              span.d-block.small.text-muted DELAYED
+              span.h4.font-weight-bold.text-warning#delayedCount 0
+            .col-md-3.col-6
+              span.d-block.small.text-muted CANCELLED
+              span.h4.font-weight-bold.text-danger#cancelledCount 0
+
+        #commuterTrainGrid.row
+
+      // ==========================================
+      // TAB 2: TRANSIT OPERATOR DISPATCH DESK
+      // ==========================================
+      .tab-pane.fade#operator-view(role="tabpanel")
+        .d-flex.justify-content-between.align-items-center.mb-3
+          div
+            h5.text-white.mb-0 Dispatcher Operations Panel
+            p.small.text-muted.mb-0 Update train statuses, adjust delay minutes, select disruption reasons, or re-assign platforms live.
+          button.btn.btn-success.btn-sm(data-toggle="modal", data-target="#addTrainModal")
+            i.fas.fa-plus-circle.mr-2
+            span Add Schedule
+
+        .table-responsive.bg-dark-card.rounded.p-3
+          table.table.table-dark.table-hover.mb-0#operatorTable
+            thead
+              tr
+                th Train No.
+                th Train Name
+                th Route
+                th Sched.
+                th Platform
+                th Status
+                th Delay (Mins)
+                th Disruption Reason
+                th Actions
+            tbody#operatorTableBody
+              tr
+                td(colspan="9").text-center.text-muted Loading dispatch data...
+
+      // ==========================================
+      // TAB 3: SRE CHAOS & RELIABILITY ROOM
+      // ==========================================
+      .tab-pane.fade#sre-view(role="tabpanel")
+        .row
+          .col-md-6.mb-4
+            .card.bg-dark-card.text-white.h-100
+              .card-header.d-flex.justify-content-between.align-items-center
+                span.font-weight-bold
+                  i.fas.fa-heartbeat.text-danger.mr-2
+                  span Kubernetes Liveness Probe (/health)
+                span.badge#livenessBadge.badge-success Healthy
+              .card-body
+                p.card-text.small.text-muted Controls app instance health status returned to Kubernetes pod liveness monitors.
+                .mb-3
+                  span.d-block.small.text-muted CURRENT PROBE RESPONSE:
+                  code.d-block.p-2.bg-black.rounded#livenessResponseJson Loading...
+                .d-flex
+                  button.btn.btn-danger.btn-block.mr-2#btnBreakApp
+                    i.fas.fa-skull.mr-2
+                    span Inject Outage (/break)
+                  button.btn.btn-success.btn-block.mt-0#btnRestoreApp
+                    i.fas.fa-check-circle.mr-2
+                    span Restore Health (/restore)
+
+          .col-md-6.mb-4
+            .card.bg-dark-card.text-white.h-100
+              .card-header.d-flex.justify-content-between.align-items-center
+                span.font-weight-bold
+                  i.fas.fa-microchip.text-info.mr-2
+                  span HPA CPU Stress Tester (/generate-cpu-load)
+                span.badge.badge-info Autoscaling Test
+              .card-body
+                p.card-text.small.text-muted Triggers intensive CPU loop calculations to test Kubernetes Horizontal Pod Autoscaling (HPA).
+                .mb-3
+                  span.d-block.small.text-muted LAST EXECUTION RESULT:
+                  code.d-block.p-2.bg-black.rounded#cpuResultJson Ready to run calculation...
+                button.btn.btn-warning.btn-block#btnCpuStress
+                  i.fas.fa-bolt.mr-2
+                  span Generate Heavy CPU Load
+
+        .row
+          .col-12
+            .card.bg-dark-card.text-white
+              .card-header
+                i.fas.fa-terminal.mr-2.text-warning
+                span Real-Time Probe Log Monitor
+              .card-body
+                pre.p-3.bg-black.text-success.rounded.small.mb-0#sreLogTerminal(style="height: 180px; overflow-y: auto;") System initialized. Listening for probe metrics...
+
+  // ==========================================
+  // MODALS
+  // ==========================================
+  
+  // Dispatch Modal
+  .modal.fade#dispatchModal(tabindex="-1", role="dialog", aria-hidden="true")
+    .modal-dialog.modal-dialog-centered(role="document")
+      .modal-content.bg-dark-modal.text-white
+        .modal-header
+          h5.modal-title
+            i.fas.fa-edit.mr-2.text-primary
+            span Update Dispatch Details: 
+            span#modalTrainTitle
+          button.close.text-white(type="button", data-dismiss="modal") &times;
+        .modal-body
+          form#dispatchForm
+            input(type="hidden", id="dispatchTrainId")
+            .form-group
+              label.small.text-muted Status
+              select.form-control.bg-dark-input.text-white#dispatchStatus
+                option(value="ON-TIME") ON-TIME
+                option(value="DELAYED") DELAYED
+                option(value="CANCELLED") CANCELLED
+            .form-row
+              .form-group.col-md-6
+                label.small.text-muted Delay Minutes
+                input.form-control.bg-dark-input.text-white#dispatchDelayMins(type="number", min="0", value="0")
+              .form-group.col-md-6
+                label.small.text-muted Platform
+                input.form-control.bg-dark-input.text-white#dispatchPlatform(type="text", placeholder="e.g. Platform 2")
+            .form-group
+              label.small.text-muted Disruption / Delay Reason
+              select.form-control.bg-dark-input.text-white.mb-2#dispatchPresetReason
+                option(value="None") None (On-Time)
+                option(value="Signaling Fault at Station Junction") Signaling Fault at Station Junction
+                option(value="Mechanical & Brake Inspection") Mechanical & Brake Inspection
+                option(value="Track Maintenance & Debris Clear") Track Maintenance & Debris Clear
+                option(value="Platform Overcrowding & Reassignment") Platform Overcrowding & Reassignment
+                option(value="Custom") Custom Reason...
+              input.form-control.bg-dark-input.text-white#dispatchCustomReason(type="text", placeholder="Type custom disruption reason...", style="display:none;")
+        .modal-footer
+          button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          button.btn.btn-primary#btnSaveDispatch(type="button") Save & Broadcast Update
+
+  // Add Train Modal
+  .modal.fade#addTrainModal(tabindex="-1", role="dialog", aria-hidden="true")
+    .modal-dialog.modal-dialog-centered(role="document")
+      .modal-content.bg-dark-modal.text-white
+        .modal-header
+          h5.modal-title
+            i.fas.fa-plus-circle.mr-2.text-success
+            span Add New Train Schedule
+          button.close.text-white(type="button", data-dismiss="modal") &times;
+        .modal-body
+          form#addTrainForm
+            .form-group
+              label.small.text-muted Train Name
+              input.form-control.bg-dark-input.text-white#newTrainName(type="text", placeholder="e.g. Bullet Commuter", required)
+            .form-row
+              .form-group.col-md-6
+                label.small.text-muted Train Number
+                input.form-control.bg-dark-input.text-white#newTrainNum(type="text", placeholder="e.g. EXP-702")
+              .form-group.col-md-6
+                label.small.text-muted Platform
+                input.form-control.bg-dark-input.text-white#newPlatform(type="text", placeholder="e.g. Platform 1")
+            .form-row
+              .form-group.col-md-6
+                label.small.text-muted Origin
+                input.form-control.bg-dark-input.text-white#newOrigin(type="text", placeholder="e.g. Sycamore Station")
+              .form-group.col-md-6
+                label.small.text-muted Destination
+                input.form-control.bg-dark-input.text-white#newDest(type="text", placeholder="e.g. Cypress Terminal")
+            .form-group
+              label.small.text-muted Scheduled Departure Time
+              input.form-control.bg-dark-input.text-white#newScheduledTime(type="text", placeholder="e.g. 04:15 PM", required)
+        .modal-footer
+          button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          button.btn.btn-success#btnAddTrainSave(type="button") Add Schedule

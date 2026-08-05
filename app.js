@@ -25,24 +25,85 @@ app.use(function (req, res, next) {
      broken: broken
    };
    next();
-});
+ });
 
+// Application Page Routes & API Routes
 app.use('/', indexRouter);
 app.use('/trains', trainsRouter);
+app.use('/api/v1/trains', trainsRouter);
 
-//this endpoint performs cpu-intensive calculations
-app.get('/generate-cpu-load', function(req, res, next) {
-  var val = 0.0001
-  for (i = 0; i < 1000000; i++) {
-    val += Math.sqrt(val);
+// Kubernetes Liveness Probe Endpoint
+app.get('/health', function(req, res, next) {
+  if (!broken) {
+    res.status(200).json({
+      status: 'UP',
+      message: 'Transit Application is running healthy',
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString()
+    });
+  } else {
+    res.status(500).json({
+      status: 'DOWN',
+      error: 'Simulated service degradation (Chaos mode active)',
+      timestamp: new Date().toISOString()
+    });
   }
-  res.status(200).send('Doing a bunch of calculations!')
 });
 
-//this endpoint triggers the app to simulate entering an unhealthy state by causing it to return 5XX errors.
-app.get('/break', function(req, res, next) {
-	broken = true;
-	res.status(200).send('The app is now broken!')
+// Kubernetes Readiness Probe Endpoint
+app.get('/ready', function(req, res, next) {
+  res.status(200).json({
+    status: 'READY',
+    message: 'Transit Application is ready to accept traffic',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// SRE Chaos Testing Endpoints
+app.get('/generate-cpu-load', function(req, res, next) {
+  var val = 0.0001;
+  for (var i = 0; i < 10000000; i++) {
+    val += Math.sqrt(val);
+  }
+  res.status(200).json({
+    status: 'SUCCESS',
+    message: 'CPU load calculation completed',
+    result: val
+  });
+});
+
+// Simulate service outage (Chaos Injection)
+app.all('/break', function(req, res, next) {
+  broken = true;
+  res.status(200).json({
+    status: 'BROKEN',
+    message: 'Application health status set to UNHEALTHY (HTTP 500 triggered on /health)'
+  });
+});
+
+app.post('/api/v1/sre/break', function(req, res, next) {
+  broken = true;
+  res.status(200).json({
+    status: 'BROKEN',
+    message: 'Application health status set to UNHEALTHY'
+  });
+});
+
+// Restore service health
+app.all('/restore', function(req, res, next) {
+  broken = false;
+  res.status(200).json({
+    status: 'RESTORED',
+    message: 'Application health restored to HEALTHY (HTTP 200 on /health)'
+  });
+});
+
+app.post('/api/v1/sre/restore', function(req, res, next) {
+  broken = false;
+  res.status(200).json({
+    status: 'RESTORED',
+    message: 'Application health restored to HEALTHY'
+  });
 });
 
 // catch 404 and forward to error handler
@@ -52,13 +113,15 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+    res.json({ error: err.message || 'Internal Server Error' });
+  } else {
+    res.render('error');
+  }
 });
 
 module.exports = app;

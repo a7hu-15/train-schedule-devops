@@ -1,86 +1,149 @@
 {
-	"trains": [
-		{
-			"name": "Hogwarts Express",
-			"stops": [
-				{
-					"station": "Sycamore",
-					"status": "ON-TIME",
-					"arrival": "12:00pm",
-					"departure": "12:10pm"
-				},
-				{
-					"station": "Pine",
-					"status": "ON-TIME",
-					"arrival": "1:00pm",
-					"departure": "1:10pm"
-				}
-			]
-		},
-		{
-			"name": "Flying Scotsman",
-			"stops": [
-				{
-					"station": "Pine",
-					"status": "ON-TIME",
-					"arrival": "12:00pm",
-					"departure": "12:10pm"
-				},
-				{
-					"station": "Sycamore",
-					"status": "DELAYED",
-					"arrival": "1:00pm",
-					"departure": "1:10pm",
-					"delayedArrival": "1:00pm",
-					"delayedDeparture": "1:17pm"
-				}
-			]
-		},
-		{
-			"name": "Orient Express",
-			"stops": [
-				{
-					"station": "Sycamore",
-					"status": "ON-TIME",
-					"arrival": "12:00pm",
-					"departure": "12:10pm"
-				},
-				{
-					"station": "Cypress",
-					"status": "DELAYED",
-					"arrival": "1:00pm",
-					"departure": "1:10pm",
-					"delayedArrival": "1:07pm",
-					"delayedDeparture": "1:17pm"
-				}
-			]
-		},
-		{
-			"name": "Golden Arrow",
-			"stops": [
-				{
-					"station": "Cypress",
-					"status": "ON-TIME",
-					"arrival": "12:00pm",
-					"departure": "12:10pm"
-				},
-				{
-					"station": "Pine",
-					"status": "DELAYED",
-					"arrival": "1:00pm",
-					"departure": "1:10pm",
-					"delayedArrival": "1:07pm",
-					"delayedDeparture": "1:17pm"
-				},
-				{
-					"station": "Hickory",
-					"status": "DELAYED",
-					"arrival": "1:00pm",
-					"departure": "1:10pm",
-					"delayedArrival": "1:07pm",
-					"delayedDeparture": "1:17pm"
-				}
-			]
-		}
-	]
+  "trains": [
+    {
+      "id": "TR-101",
+      "trainNumber": "EXP-101",
+      "name": "Hogwarts Express",
+      "origin": "Sycamore Station",
+      "destination": "Pine Station",
+      "scheduledTime": "12:00 PM",
+      "estimatedTime": "12:00 PM",
+      "platform": "Platform 1",
+      "status": "ON-TIME",
+      "delayMinutes": 0,
+      "delayReason": "None",
+      "stops": [
+        {
+          "station": "Sycamore",
+          "status": "ON-TIME",
+          "arrival": "12:00pm",
+          "departure": "12:10pm"
+        },
+        {
+          "station": "Pine",
+          "status": "ON-TIME",
+          "arrival": "1:00pm",
+          "departure": "1:10pm"
+        }
+      ]
+    },
+    {
+      "id": "TR-102",
+      "trainNumber": "EXP-204",
+      "name": "Flying Scotsman",
+      "origin": "Pine Station",
+      "destination": "Sycamore Station",
+      "scheduledTime": "12:30 PM",
+      "estimatedTime": "12:45 PM",
+      "platform": "Platform 4",
+      "status": "DELAYED",
+      "delayMinutes": 25,
+      "delayReason": "Track Signaling Interruption at Sycamore Junction",
+      "stops": [
+        {
+          "station": "Pine",
+          "status": "ON-TIME",
+          "arrival": "12:30pm",
+          "departure": "12:35pm"
+        },
+        {
+          "station": "Sycamore",
+          "status": "DELAYED",
+          "arrival": "1:00pm",
+          "departure": "1:10pm",
+          "delayedArrival": "1:15pm",
+          "delayedDeparture": "1:25pm"
+        }
+      ]
+    },
+    {
+      "id": "TR-103",
+      "trainNumber": "EXP-309",
+      "name": "Orient Express",
+      "origin": "Sycamore Station",
+      "destination": "Cypress Terminal",
+      "scheduledTime": "01:15 PM",
+      "estimatedTime": "01:30 PM",
+      "platform": "Platform 2",
+      "status": "DELAYED",
+      "delayMinutes": 15,
+      "delayReason": "Mechanical Brake Check at Cypress",
+      "stops": [
+        {
+          "station": "Sycamore",
+          "status": "ON-TIME",
+          "arrival": "1:15pm",
+          "departure": "1:25pm"
+        },
+        {
+          "station": "Cypress",
+          "status": "DELAYED",
+          "arrival": "2:00pm",
+          "departure": "2:10pm",
+          "delayedArrival": "2:15pm",
+          "delayedDeparture": "2:25pm"
+        }
+      ]
+    },
+    {
+      "id": "TR-104",
+      "trainNumber": "EXP-412",
+      "name": "Golden Arrow",
+      "origin": "Cypress Terminal",
+      "destination": "Hickory Central",
+      "scheduledTime": "02:00 PM",
+      "estimatedTime": "02:00 PM",
+      "platform": "Platform 4",
+      "status": "ON-TIME",
+      "delayMinutes": 0,
+      "delayReason": "None",
+      "stops": [
+        {
+          "station": "Cypress",
+          "status": "ON-TIME",
+          "arrival": "2:00pm",
+          "departure": "2:10pm"
+        },
+        {
+          "station": "Pine",
+          "status": "ON-TIME",
+          "arrival": "2:30pm",
+          "departure": "2:35pm"
+        },
+        {
+          "station": "Hickory",
+          "status": "ON-TIME",
+          "arrival": "3:10pm",
+          "departure": "3:20pm"
+        }
+      ]
+    },
+    {
+      "id": "TR-105",
+      "trainNumber": "EXP-550",
+      "name": "Pacific Surfliner",
+      "origin": "Hickory Central",
+      "destination": "Pine Station",
+      "scheduledTime": "03:30 PM",
+      "estimatedTime": "CANCELLED",
+      "platform": "Platform 1",
+      "status": "CANCELLED",
+      "delayMinutes": 0,
+      "delayReason": "Severe Track Maintenance & Debris Clear",
+      "stops": [
+        {
+          "station": "Hickory",
+          "status": "CANCELLED",
+          "arrival": "3:30pm",
+          "departure": "3:40pm"
+        },
+        {
+          "station": "Pine",
+          "status": "CANCELLED",
+          "arrival": "4:30pm",
+          "departure": "4:40pm"
+        }
+      ]
+    }
+  ]
 }
