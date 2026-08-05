@@ -6,7 +6,7 @@ block content
     .dynamic-island-container
       .dynamic-island.d-flex.align-items-center
         i.fas.fa-circle.text-success.mr-2.fa-xs(style="animation: pulse 2s infinite;")
-        span.font-weight-semibold.small.mr-3 RailPulse Live Network Feed
+        span.font-weight-semibold.small.mr-3 Indian Railways Live Transit Feed
         span.text-muted.x-small.mr-3 |
         span.font-weight-bold.text-white.small#liveClock --:--:--
 
@@ -17,14 +17,14 @@ block content
           i.fas.fa-train.text-warning.fa-lg
         div
           span.font-weight-bold.text-white.h5.mb-0.letter-spacing-tight RailPulse
-          span.d-block.x-small.text-muted Transit Operations & Disruption Hub
+          span.d-block.x-small.text-muted All-India Train & Disruption Hub
       
       // macOS Segmented Control Bar
       ul.nav.apple-segmented-nav#mainTabs(role="tablist")
         li.nav-item
           a.nav-link.active#commuter-tab(data-toggle="tab", href="#commuter-view", role="tab")
-            i.fas.fa-clock.mr-2
-            span Live Departures
+            i.fas.fa-search-location.mr-2
+            span Route & Train Finder
         li.nav-item
           a.nav-link#map-tab(data-toggle="tab", href="#map-view", role="tab")
             i.fas.fa-map-marked-alt.mr-2
@@ -57,28 +57,48 @@ block content
     // Main Content Views
     .tab-content#tabContent
       // ==========================================
-      // VIEW 1: LIVE DEPARTURES (COMMUTER VIEW)
+      // VIEW 1: ROUTE & TRAIN FINDER (COMMUTER VIEW)
       // ==========================================
       .tab-pane.fade.show.active#commuter-view(role="tabpanel")
-        .row.mb-4.align-items-center
-          .col-md-7
-            .search-box.position-relative
-              i.fas.fa-search.apple-search-icon
-              input.form-control.apple-search-input#commuterSearch(type="text", placeholder="Search station, train name, or train number...")
-          .col-md-5.text-md-right.mt-2.mt-md-0.apple-filter-pill
-            span.x-small.text-muted.mr-2 Station:
-            .btn-group.btn-group-sm.station-filter-group(role="group")
-              button.btn.active(data-station="") All
-              button.btn(data-station="Sycamore") Sycamore
-              button.btn(data-station="Pine") Pine
-              button.btn(data-station="Cypress") Cypress
-              button.btn(data-station="Hickory") Hickory
+        // Route & Train Search Controls
+        .apple-card.p-4.mb-4
+          h6.font-weight-bold.text-white.mb-3
+            i.fas.fa-route.text-info.mr-2
+            span Find Trains Across India (By Route or Train No)
+          .form-row
+            .form-group.col-md-4.col-12.mb-2
+              label.x-small.text-muted FROM (ORIGIN STATION / CITY)
+              .position-relative
+                i.fas.fa-map-pin.apple-search-icon
+                input.form-control.apple-search-input#routeOriginInput(type="text", placeholder="e.g. Delhi, Jaipur, Mumbai...")
+            .form-group.col-md-4.col-12.mb-2
+              label.x-small.text-muted TO (DESTINATION STATION / CITY)
+              .position-relative
+                i.fas.fa-flag-checkered.apple-search-icon
+                input.form-control.apple-search-input#routeDestInput(type="text", placeholder="e.g. Jaipur, Agra, Varanasi...")
+            .form-group.col-md-4.col-12.mb-2
+              label.x-small.text-muted TRAIN NUMBER OR NAME
+              .position-relative
+                i.fas.fa-search.apple-search-icon
+                input.form-control.apple-search-input#trainSearchInput(type="text", placeholder="e.g. 12015, 12957, Shatabdi...")
+
+          .d-flex.flex-wrap.align-items-center.justify-content-between.mt-2
+            .quick-routes.mb-2
+              span.x-small.text-muted.mr-2 Popular Routes:
+              button.btn.btn-xs.btn-outline-info.apple-btn-pill.mr-1.mb-1.btn-quick-route(data-from="Delhi", data-to="Jaipur") Delhi ➔ Jaipur
+              button.btn.btn-xs.btn-outline-info.apple-btn-pill.mr-1.mb-1.btn-quick-route(data-from="Mumbai", data-to="Delhi") Mumbai ➔ Delhi
+              button.btn.btn-xs.btn-outline-info.apple-btn-pill.mr-1.mb-1.btn-quick-route(data-from="Delhi", data-to="Varanasi") Delhi ➔ Varanasi
+              button.btn.btn-xs.btn-outline-info.apple-btn-pill.mr-1.mb-1.btn-quick-route(data-from="", data-to="") Clear Filters
+            
+            button.btn.btn-primary.apple-btn-pill.px-4#btnSearchRoute
+              i.fas.fa-search.mr-2
+              span Search Trains
 
         // Summary Bar
         .apple-card.mb-4.p-4
           .row.text-center
             .col-md-3.col-6.border-right.border-secondary
-              span.d-block.x-small.text-muted.letter-spacing-wide TOTAL TRAINS
+              span.d-block.x-small.text-muted.letter-spacing-wide MATCHING TRAINS
               span.h3.font-weight-bold.text-white#totalTrainsCount 0
             .col-md-3.col-6.border-right.border-secondary
               span.d-block.x-small.text-muted.letter-spacing-wide ON TIME
@@ -99,8 +119,8 @@ block content
         .apple-card.p-4.mb-4
           .d-flex.justify-content-between.align-items-center.mb-3
             div
-              h5.font-weight-bold.mb-0 Transit Line Topology
-              p.x-small.text-muted.mb-0 Live track node status and real-time train positioning.
+              h5.font-weight-bold.mb-0 All-India Rail Corridor Topology
+              p.x-small.text-muted.mb-0 Live track node status and real-time train positioning across major Indian routes.
             span.badge.badge-success.apple-btn-pill.p-2
               i.fas.fa-broadcast-tower.mr-1
               span Network Operational
@@ -111,23 +131,23 @@ block content
               .station-node.text-center
                 .node-circle.bg-success
                   i.fas.fa-building.text-white
-                span.d-block.font-weight-bold.mt-2.small Sycamore
-                span.x-small.text-muted Terminal A
+                span.d-block.font-weight-bold.mt-2.small Delhi (NDLS)
+                span.x-small.text-muted Northern Hub
               .station-node.text-center
                 .node-circle.bg-info
                   i.fas.fa-subway.text-white
-                span.d-block.font-weight-bold.mt-2.small Pine
-                span.x-small.text-muted Central Hub
+                span.d-block.font-weight-bold.mt-2.small Jaipur (JP)
+                span.x-small.text-muted Western Line
               .station-node.text-center
                 .node-circle.bg-warning
                   i.fas.fa-exchange-alt.text-white
-                span.d-block.font-weight-bold.mt-2.small Cypress
-                span.x-small.text-muted Junction
+                span.d-block.font-weight-bold.mt-2.small Kanpur (CNB)
+                span.x-small.text-muted Central Junction
               .station-node.text-center
                 .node-circle.bg-primary
                   i.fas.fa-flag-checkered.text-white
-                span.d-block.font-weight-bold.mt-2.small Hickory
-                span.x-small.text-muted Terminal B
+                span.d-block.font-weight-bold.mt-2.small Mumbai (MMCT)
+                span.x-small.text-muted Southern Corridor
 
           .mt-4
             h6.font-weight-bold.mb-3 Running Trains
@@ -294,10 +314,10 @@ block content
               label.x-small.text-muted SELECT TRAIN SCHEDULE
               select.form-control.apple-modal-input#subTrainId
                 option(value="ALL") All Trains & Disruption Alerts
-                option(value="TR-101") Hogwarts Express (EXP-101)
-                option(value="TR-102") Flying Scotsman (EXP-204)
-                option(value="TR-103") Orient Express (EXP-309)
-                option(value="TR-104") Golden Arrow (EXP-412)
+                option(value="TR-12015") Ajmer Shatabdi (12015)
+                option(value="TR-12957") Swarna Jayanti Rajdhani (12957)
+                option(value="TR-22436") Vande Bharat Express (22436)
+                option(value="TR-12951") Mumbai Rajdhani (12951)
             .form-group.mb-0
               label.x-small.text-muted ALERT THRESHOLD
               select.form-control.apple-modal-input#subThreshold
@@ -361,24 +381,24 @@ block content
           form#addTrainForm
             .form-group
               label.x-small.text-muted TRAIN NAME
-              input.form-control.apple-modal-input#newTrainName(type="text", placeholder="e.g. Bullet Express", required)
+              input.form-control.apple-modal-input#newTrainName(type="text", placeholder="e.g. Vande Bharat Express", required)
             .form-row
               .form-group.col-md-6
                 label.x-small.text-muted TRAIN NUMBER
-                input.form-control.apple-modal-input#newTrainNum(type="text", placeholder="e.g. EXP-702")
+                input.form-control.apple-modal-input#newTrainNum(type="text", placeholder="e.g. 20977")
               .form-group.col-md-6
                 label.x-small.text-muted PLATFORM
                 input.form-control.apple-modal-input#newPlatform(type="text", placeholder="e.g. Platform 1")
             .form-row
               .form-group.col-md-6
                 label.x-small.text-muted ORIGIN
-                input.form-control.apple-modal-input#newOrigin(type="text", placeholder="e.g. Sycamore Station")
+                input.form-control.apple-modal-input#newOrigin(type="text", placeholder="e.g. Delhi (NDLS)")
               .form-group.col-md-6
                 label.x-small.text-muted DESTINATION
-                input.form-control.apple-modal-input#newDest(type="text", placeholder="e.g. Cypress Terminal")
+                input.form-control.apple-modal-input#newDest(type="text", placeholder="e.g. Jaipur (JP)")
             .form-group.mb-0
               label.x-small.text-muted SCHEDULED DEPARTURE TIME
-              input.form-control.apple-modal-input#newScheduledTime(type="text", placeholder="e.g. 04:15 PM", required)
+              input.form-control.apple-modal-input#newScheduledTime(type="text", placeholder="e.g. 06:10 AM", required)
         .modal-footer.border-0.pt-0
           button.btn.btn-secondary.apple-btn-pill(type="button", data-dismiss="modal") Cancel
           button.btn.btn-success.apple-btn-pill#btnAddTrainSave(type="button") Save Schedule

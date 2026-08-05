@@ -1,6 +1,264 @@
 {
   "trains": [
     {
+      "id": "TR-12015",
+      "trainNumber": "12015",
+      "name": "Ajmer Shatabdi Express",
+      "origin": "New Delhi (NDLS)",
+      "destination": "Ajmer Junction (AII)",
+      "scheduledTime": "06:10 AM",
+      "estimatedTime": "06:10 AM",
+      "platform": "Platform 2",
+      "status": "ON-TIME",
+      "delayMinutes": 0,
+      "delayReason": "None",
+      "stops": [
+        {
+          "station": "New Delhi (NDLS)",
+          "status": "ON-TIME",
+          "arrival": "06:10am",
+          "departure": "06:10am"
+        },
+        {
+          "station": "Delhi Cantt (DEC)",
+          "status": "ON-TIME",
+          "arrival": "06:38am",
+          "departure": "06:40am"
+        },
+        {
+          "station": "Gurgaon (GGN)",
+          "status": "ON-TIME",
+          "arrival": "06:56am",
+          "departure": "06:58am"
+        },
+        {
+          "station": "Alwar (AWR)",
+          "status": "ON-TIME",
+          "arrival": "08:47am",
+          "departure": "08:50am"
+        },
+        {
+          "station": "Jaipur Junction (JP)",
+          "status": "ON-TIME",
+          "arrival": "10:40am",
+          "departure": "10:45am"
+        },
+        {
+          "station": "Ajmer Junction (AII)",
+          "status": "ON-TIME",
+          "arrival": "12:55pm",
+          "departure": "12:55pm"
+        }
+      ],
+      "coachDensity": "Low",
+      "densityReports": 38
+    },
+    {
+      "id": "TR-12957",
+      "trainNumber": "12957",
+      "name": "Swarna Jayanti Rajdhani Express",
+      "origin": "New Delhi (NDLS)",
+      "destination": "Sabarmati BG (SBIB)",
+      "scheduledTime": "08:45 PM",
+      "estimatedTime": "08:45 PM",
+      "platform": "Platform 1",
+      "status": "ON-TIME",
+      "delayMinutes": 0,
+      "delayReason": "None",
+      "stops": [
+        {
+          "station": "New Delhi (NDLS)",
+          "status": "ON-TIME",
+          "arrival": "08:45pm",
+          "departure": "08:45pm"
+        },
+        {
+          "station": "Delhi Cantt (DEC)",
+          "status": "ON-TIME",
+          "arrival": "09:08pm",
+          "departure": "09:10pm"
+        },
+        {
+          "station": "Jaipur Junction (JP)",
+          "status": "ON-TIME",
+          "arrival": "01:00am",
+          "departure": "01:10am"
+        },
+        {
+          "station": "Sabarmati BG (SBIB)",
+          "status": "ON-TIME",
+          "arrival": "08:05am",
+          "departure": "08:05am"
+        }
+      ],
+      "coachDensity": "Moderate",
+      "densityReports": 52
+    },
+    {
+      "id": "TR-12981",
+      "trainNumber": "12981",
+      "name": "Chetak Express",
+      "origin": "Delhi Sarai Rohilla (DEE)",
+      "destination": "Udaipur City (UDZ)",
+      "scheduledTime": "07:40 PM",
+      "estimatedTime": "07:55 PM",
+      "platform": "Platform 3",
+      "status": "DELAYED",
+      "delayMinutes": 15,
+      "delayReason": "Crossing Restriction near Rewari Junction",
+      "stops": [
+        {
+          "station": "Delhi Sarai Rohilla (DEE)",
+          "status": "ON-TIME",
+          "arrival": "07:40pm",
+          "departure": "07:40pm"
+        },
+        {
+          "station": "Gurgaon (GGN)",
+          "status": "ON-TIME",
+          "arrival": "08:11pm",
+          "departure": "08:13pm"
+        },
+        {
+          "station": "Jaipur Junction (JP)",
+          "status": "DELAYED",
+          "arrival": "12:45am",
+          "departure": "12:55am"
+        },
+        {
+          "station": "Udaipur City (UDZ)",
+          "status": "DELAYED",
+          "arrival": "07:50am",
+          "departure": "07:50am"
+        }
+      ],
+      "coachDensity": "Heavy",
+      "densityReports": 64
+    },
+    {
+      "id": "TR-12414",
+      "trainNumber": "12414",
+      "name": "Pooja Superfast Express",
+      "origin": "Jammu Tawi (JAT)",
+      "destination": "Ajmer Junction (AII)",
+      "scheduledTime": "04:15 AM",
+      "estimatedTime": "04:15 AM",
+      "platform": "Platform 4",
+      "status": "ON-TIME",
+      "delayMinutes": 0,
+      "delayReason": "None",
+      "stops": [
+        {
+          "station": "Old Delhi (DLI)",
+          "status": "ON-TIME",
+          "arrival": "04:00am",
+          "departure": "04:15am"
+        },
+        {
+          "station": "Gurgaon (GGN)",
+          "status": "ON-TIME",
+          "arrival": "04:53am",
+          "departure": "04:55am"
+        },
+        {
+          "station": "Jaipur Junction (JP)",
+          "status": "ON-TIME",
+          "arrival": "09:30am",
+          "departure": "09:40am"
+        },
+        {
+          "station": "Ajmer Junction (AII)",
+          "status": "ON-TIME",
+          "arrival": "12:10pm",
+          "departure": "12:10pm"
+        }
+      ],
+      "coachDensity": "Low",
+      "densityReports": 22
+    },
+    {
+      "id": "TR-12916",
+      "trainNumber": "12916",
+      "name": "Ashram Express",
+      "origin": "Old Delhi (DLI)",
+      "destination": "Sabarmati BG (SBIB)",
+      "scheduledTime": "03:20 PM",
+      "estimatedTime": "03:20 PM",
+      "platform": "Platform 3",
+      "status": "ON-TIME",
+      "delayMinutes": 0,
+      "delayReason": "None",
+      "stops": [
+        {
+          "station": "Old Delhi (DLI)",
+          "status": "ON-TIME",
+          "arrival": "03:20pm",
+          "departure": "03:20pm"
+        },
+        {
+          "station": "Delhi Cantt (DEC)",
+          "status": "ON-TIME",
+          "arrival": "03:53pm",
+          "departure": "03:55pm"
+        },
+        {
+          "station": "Jaipur Junction (JP)",
+          "status": "ON-TIME",
+          "arrival": "08:15pm",
+          "departure": "08:25pm"
+        },
+        {
+          "station": "Sabarmati BG (SBIB)",
+          "status": "ON-TIME",
+          "arrival": "06:20am",
+          "departure": "06:20am"
+        }
+      ],
+      "coachDensity": "Low",
+      "densityReports": 31
+    },
+    {
+      "id": "TR-20977",
+      "trainNumber": "20977",
+      "name": "Ajmer - Delhi Vande Bharat Express",
+      "origin": "Ajmer Junction (AII)",
+      "destination": "Delhi Cantt (DEC)",
+      "scheduledTime": "06:20 AM",
+      "estimatedTime": "06:20 AM",
+      "platform": "Platform 1",
+      "status": "ON-TIME",
+      "delayMinutes": 0,
+      "delayReason": "None",
+      "stops": [
+        {
+          "station": "Ajmer Junction (AII)",
+          "status": "ON-TIME",
+          "arrival": "06:20am",
+          "departure": "06:20am"
+        },
+        {
+          "station": "Jaipur Junction (JP)",
+          "status": "ON-TIME",
+          "arrival": "07:50am",
+          "departure": "07:55am"
+        },
+        {
+          "station": "Alwar (AWR)",
+          "status": "ON-TIME",
+          "arrival": "09:35am",
+          "departure": "09:37am"
+        },
+        {
+          "station": "Delhi Cantt (DEC)",
+          "status": "ON-TIME",
+          "arrival": "11:35am",
+          "departure": "11:35am"
+        }
+      ],
+      "coachDensity": "Low",
+      "densityReports": 45
+    },
+    {
       "id": "TR-22436",
       "trainNumber": "22436",
       "name": "Vande Bharat Express",
@@ -134,7 +392,7 @@
       "platform": "Platform 9",
       "status": "DELAYED",
       "delayMinutes": 25,
-      "delayReason": "Track Maintenance & Speed Restriction near Dhanbad",
+      "delayReason": "Track Maintenance near Dhanbad",
       "stops": [
         {
           "station": "Sealdah (SDAH)",
@@ -163,141 +421,59 @@
       ],
       "coachDensity": "Heavy",
       "densityReports": 84
-    },
-    {
-      "id": "TR-82501",
-      "trainNumber": "82501",
-      "name": "Lucknow Tejas Express",
-      "origin": "Lucknow JN (LJN)",
-      "destination": "New Delhi (NDLS)",
-      "scheduledTime": "06:10 AM",
-      "estimatedTime": "06:10 AM",
-      "platform": "Platform 6",
-      "status": "ON-TIME",
-      "delayMinutes": 0,
-      "delayReason": "None",
-      "stops": [
-        {
-          "station": "Lucknow JN (LJN)",
-          "status": "ON-TIME",
-          "arrival": "06:10am",
-          "departure": "06:10am"
-        },
-        {
-          "station": "Kanpur Central (CNB)",
-          "status": "ON-TIME",
-          "arrival": "07:20am",
-          "departure": "07:25am"
-        },
-        {
-          "station": "Ghaziabad (GZB)",
-          "status": "ON-TIME",
-          "arrival": "11:43am",
-          "departure": "11:45am"
-        },
-        {
-          "station": "New Delhi (NDLS)",
-          "status": "ON-TIME",
-          "arrival": "12:25pm",
-          "departure": "12:25pm"
-        }
-      ],
-      "coachDensity": "Low",
-      "densityReports": 19
-    },
-    {
-      "id": "TR-12049",
-      "trainNumber": "12049",
-      "name": "Gatimaan Express",
-      "origin": "Hazrat Nizamuddin (NZM)",
-      "destination": "Virangana Lakshmibai Jhansi (VGLJ)",
-      "scheduledTime": "08:10 AM",
-      "estimatedTime": "08:10 AM",
-      "platform": "Platform 5",
-      "status": "ON-TIME",
-      "delayMinutes": 0,
-      "delayReason": "None",
-      "stops": [
-        {
-          "station": "Hazrat Nizamuddin (NZM)",
-          "status": "ON-TIME",
-          "arrival": "08:10am",
-          "departure": "08:10am"
-        },
-        {
-          "station": "Agra Cantt (AGC)",
-          "status": "ON-TIME",
-          "arrival": "09:50am",
-          "departure": "09:55am"
-        },
-        {
-          "station": "Gwalior (GWL)",
-          "status": "ON-TIME",
-          "arrival": "11:13am",
-          "departure": "11:15am"
-        },
-        {
-          "station": "Jhansi (VGLJ)",
-          "status": "ON-TIME",
-          "arrival": "12:35pm",
-          "departure": "12:35pm"
-        }
-      ],
-      "coachDensity": "Low",
-      "densityReports": 31
     }
   ],
   "historyLogs": [
     {
-      "id": "HIST-22436",
-      "trainId": "TR-22436",
-      "trainNumber": "22436",
+      "id": "HIST-12015",
+      "trainId": "TR-12015",
+      "trainNumber": "12015",
+      "delayMinutes": 0,
+      "status": "ON-TIME",
+      "station": "Jaipur Junction (JP)",
+      "timestamp": "2026-08-05T10:40:00.000Z"
+    },
+    {
+      "id": "HIST-12957",
+      "trainId": "TR-12957",
+      "trainNumber": "12957",
       "delayMinutes": 0,
       "status": "ON-TIME",
       "station": "New Delhi (NDLS)",
-      "timestamp": "2026-08-05T06:00:00.000Z"
-    },
-    {
-      "id": "HIST-12951",
-      "trainId": "TR-12951",
-      "trainNumber": "12951",
-      "delayMinutes": 15,
-      "status": "DELAYED",
-      "station": "Vadodara (BRC)",
-      "timestamp": "2026-08-05T09:10:00.000Z"
+      "timestamp": "2026-08-05T08:45:00.000Z"
     }
   ],
   "gpsTelemetry": [
     {
-      "id": "GPS-22436",
-      "trainId": "TR-22436",
-      "trainNumber": "22436",
-      "lat": 28.6139,
-      "lng": 77.209,
-      "speedKmh": 130,
-      "timestamp": "2026-08-05T11:45:00.000Z"
+      "id": "GPS-12015",
+      "trainId": "TR-12015",
+      "trainNumber": "12015",
+      "lat": 26.9124,
+      "lng": 75.7873,
+      "speedKmh": 110,
+      "timestamp": "2026-08-05T12:00:00.000Z"
     }
   ],
   "coachDensity": {
-    "TR-22436": {
+    "TR-12015": {
       "density": "Low",
-      "reports": 42,
-      "lastUpdated": "2026-08-05T11:45:00.000Z"
+      "reports": 38,
+      "lastUpdated": "2026-08-05T12:00:00.000Z"
     },
-    "TR-12951": {
+    "TR-12957": {
       "density": "Moderate",
-      "reports": 68,
-      "lastUpdated": "2026-08-05T11:45:00.000Z"
+      "reports": 52,
+      "lastUpdated": "2026-08-05T12:00:00.000Z"
     },
-    "TR-12002": {
-      "density": "Low",
-      "reports": 29,
-      "lastUpdated": "2026-08-05T11:45:00.000Z"
-    },
-    "TR-12259": {
+    "TR-12981": {
       "density": "Heavy",
-      "reports": 84,
-      "lastUpdated": "2026-08-05T11:45:00.000Z"
+      "reports": 64,
+      "lastUpdated": "2026-08-05T12:00:00.000Z"
+    },
+    "TR-12414": {
+      "density": "Low",
+      "reports": 22,
+      "lastUpdated": "2026-08-05T12:00:00.000Z"
     }
   },
   "multiRegionState": {

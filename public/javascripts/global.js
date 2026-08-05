@@ -1,7 +1,8 @@
-// RailPulse Client Engine - Apple SF Pro Design System Engine
+// RailPulse Client Engine - Apple SF Pro Design System & All-India Route Finder Engine
 
 var allTrainsData = [];
-var activeStationFilter = "";
+var originFilter = "";
+var destFilter = "";
 var searchQuery = "";
 var socket = null;
 var isOperatorAuthed = false;
@@ -28,15 +29,29 @@ $(document).ready(function() {
   setInterval(fetchSreSlo, 5000);
   setInterval(runSyntheticProbes, 3000);
 
-  $('#commuterSearch').on('keyup input', function() {
-    searchQuery = $(this).val().trim();
+  $('#btnSearchRoute').on('click', function() {
+    originFilter = $('#routeOriginInput').val().trim();
+    destFilter = $('#routeDestInput').val().trim();
+    searchQuery = $('#trainSearchInput').val().trim();
     renderCommuterBoard();
   });
 
-  $('.station-filter-group button').on('click', function() {
-    $('.station-filter-group button').removeClass('active');
-    $(this).addClass('active');
-    activeStationFilter = $(this).data('station') || "";
+  $('.btn-quick-route').on('click', function() {
+    var from = $(this).data('from') || "";
+    var to = $(this).data('to') || "";
+    $('#routeOriginInput').val(from);
+    $('#routeDestInput').val(to);
+    $('#trainSearchInput').val('');
+    originFilter = from;
+    destFilter = to;
+    searchQuery = "";
+    renderCommuterBoard();
+  });
+
+  $('#routeOriginInput, #routeDestInput, #trainSearchInput').on('keyup input', function() {
+    originFilter = $('#routeOriginInput').val().trim();
+    destFilter = $('#routeDestInput').val().trim();
+    searchQuery = $('#trainSearchInput').val().trim();
     renderCommuterBoard();
   });
 
@@ -314,7 +329,7 @@ function renderRouteMap() {
     html += '      <span class="font-weight-bold text-info"><i class="fas fa-train mr-1"></i> ' + t.name + '</span>';
     html += '      <span class="' + statusBadge + '">' + t.status + '</span>';
     html += '    </div>';
-    html += '    <p class="x-small text-muted mb-2">Route: ' + (t.origin || 'Sycamore') + ' &rarr; ' + (t.destination || 'Hickory') + '</p>';
+    html += '    <p class="x-small text-muted mb-2">Route: ' + (t.origin || 'Delhi') + ' &rarr; ' + (t.destination || 'Jaipur') + '</p>';
     html += '    <div class="d-flex justify-content-between align-items-center x-small">';
     html += '      <span><i class="fas fa-clock mr-1 text-muted"></i> Sched: ' + t.scheduledTime + '</span>';
     html += '      <span class="apple-platform-pill">' + (t.platform || 'Platform 1') + '</span>';
@@ -344,25 +359,38 @@ function renderSummaryStats() {
 
 function renderCommuterBoard() {
   var filtered = allTrainsData.filter(function(t) {
-    if (activeStationFilter) {
-      var stationMatch = (t.origin && t.origin.indexOf(activeStationFilter) !== -1) ||
-                         (t.destination && t.destination.indexOf(activeStationFilter) !== -1) ||
-                         (t.stops && t.stops.some(function(s) { return s.station && s.station.indexOf(activeStationFilter) !== -1; }));
-      if (!stationMatch) return false;
+    // 1. Origin Filter
+    if (originFilter) {
+      var oq = originFilter.toLowerCase();
+      var oMatch = (t.origin && t.origin.toLowerCase().indexOf(oq) !== -1) ||
+                   (t.stops && t.stops.some(function(s) { return s.station && s.station.toLowerCase().indexOf(oq) !== -1; }));
+      if (!oMatch) return false;
     }
+
+    // 2. Destination Filter
+    if (destFilter) {
+      var dq = destFilter.toLowerCase();
+      var dMatch = (t.destination && t.destination.toLowerCase().indexOf(dq) !== -1) ||
+                   (t.stops && t.stops.some(function(s) { return s.station && s.station.toLowerCase().indexOf(dq) !== -1; }));
+      if (!dMatch) return false;
+    }
+
+    // 3. Train Number or Name Search Query Filter
     if (searchQuery) {
       var q = searchQuery.toLowerCase();
       var matchName = t.name && t.name.toLowerCase().indexOf(q) !== -1;
       var matchNum = t.trainNumber && t.trainNumber.toLowerCase().indexOf(q) !== -1;
       var matchOrig = t.origin && t.origin.toLowerCase().indexOf(q) !== -1;
       var matchDest = t.destination && t.destination.toLowerCase().indexOf(q) !== -1;
-      return matchName || matchNum || matchOrig || matchDest;
+      var matchStops = t.stops && t.stops.some(function(s) { return s.station && s.station.toLowerCase().indexOf(q) !== -1; });
+      return matchName || matchNum || matchOrig || matchDest || matchStops;
     }
+
     return true;
   });
 
   if (filtered.length === 0) {
-    $('#commuterTrainGrid').html('<div class="col-12 text-center text-muted py-5">No train schedules match your current search/filter criteria.</div>');
+    $('#commuterTrainGrid').html('<div class="col-12 text-center text-muted py-5"><i class="fas fa-search fa-2x mb-3 text-secondary d-block"></i>No trains found matching route: ' + (originFilter || 'Any') + ' ➔ ' + (destFilter || 'Any') + '</div>');
     return;
   }
 
@@ -377,14 +405,14 @@ function renderCommuterBoard() {
     html += '    <div>';
     html += '      <div class="d-flex justify-content-between align-items-center mb-3">';
     html += '        <div>';
-    html += '          <span class="badge badge-secondary mr-2" style="border-radius: 8px;">' + (t.trainNumber || 'EXP') + '</span>';
+    html += '          <span class="badge badge-warning text-dark font-weight-bold mr-2" style="border-radius: 8px; font-size: 0.85rem;"><i class="fas fa-train mr-1"></i>' + (t.trainNumber || 'EXP') + '</span>';
     html += '          <span class="apple-platform-pill">' + (t.platform || 'Platform 1') + '</span>';
     html += '        </div>';
     html += '        <span class="' + statusClass + '">' + t.status + '</span>';
     html += '      </div>';
 
     html += '      <h5 class="text-white font-weight-bold mb-1 letter-spacing-tight">' + t.name + '</h5>';
-    html += '      <p class="x-small text-muted mb-3"><i class="fas fa-route mr-1 text-info"></i> ' + (t.origin || 'Main Terminal') + ' &rarr; ' + (t.destination || 'Central') + '</p>';
+    html += '      <p class="x-small text-muted mb-3"><i class="fas fa-route mr-1 text-info"></i> ' + (t.origin || 'Delhi') + ' &rarr; ' + (t.destination || 'Jaipur') + '</p>';
     
     html += '      <div class="row text-center p-3 rounded mb-3" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.06);">';
     html += '        <div class="col-6 border-right border-secondary">';
@@ -402,6 +430,17 @@ function renderCommuterBoard() {
     }
     html += '        </div>';
     html += '      </div>';
+
+    if (t.stops && t.stops.length > 0) {
+      html += '    <div class="mb-3 p-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1);">';
+      html += '      <span class="d-block x-small text-muted mb-1"><i class="fas fa-list-ol mr-1 text-primary"></i> Route Stops & Timings:</span>';
+      html += '      <div class="d-flex flex-wrap x-small text-light">';
+      t.stops.forEach(function(s, idx) {
+        html += '       <span class="mr-2 mb-1"><i class="fas fa-angle-right text-muted mr-1"></i><strong>' + s.station.split(' ')[0] + '</strong> (' + s.arrival + ')</span>';
+      });
+      html += '      </div>';
+      html += '    </div>';
+    }
 
     if ((isDelayed || isCancelled) && t.delayReason && t.delayReason !== 'None') {
       html += '    <div class="apple-disruption-callout mb-3">';
@@ -434,9 +473,9 @@ function renderOperatorTable() {
   allTrainsData.forEach(function(t) {
     var statusClass = 'apple-status-' + t.status;
     html += '<tr>';
-    html += '  <td><span class="badge badge-secondary" style="border-radius: 8px;">' + (t.trainNumber || 'EXP') + '</span></td>';
+    html += '  <td><span class="badge badge-warning text-dark font-weight-bold" style="border-radius: 8px;">' + (t.trainNumber || 'EXP') + '</span></td>';
     html += '  <td class="font-weight-bold text-white">' + t.name + '</td>';
-    html += '  <td class="small text-muted">' + (t.origin || 'Main') + ' &rarr; ' + (t.destination || 'Central') + '</td>';
+    html += '  <td class="small text-muted">' + (t.origin || 'Delhi') + ' &rarr; ' + (t.destination || 'Jaipur') + '</td>';
     html += '  <td>' + t.scheduledTime + '</td>';
     html += '  <td><span class="apple-platform-pill">' + (t.platform || 'Platform 1') + '</span></td>';
     html += '  <td><span class="' + statusClass + '">' + t.status + '</span></td>';
@@ -458,7 +497,7 @@ function openDispatchModal(id) {
     return;
   }
 
-  var train = allTrainsData.find(function(t) { return t.id === id; });
+  var train = allTrainsData.find(function(t) { return t.id === id || t.trainNumber === id; });
   if (!train) return;
 
   $('#dispatchTrainId').val(train.id);

@@ -18,14 +18,12 @@ async function broadcastUpdate(req) {
     if (io) {
       io.emit('trains_updated', trains);
     }
-    // Publish over Redis Pub/Sub for multi-instance Kubernetes scaling
     redisEngine.publishEvent('railpulse_trains_updated', trains);
   } catch (err) {
     console.error('Error broadcasting websocket update:', err);
   }
 }
 
-// Middleware to check Operator Auth for mutating actions
 function checkOperator(req, res, next) {
   var requireOperatorAuth = req.app.get('requireOperatorAuth');
   if (requireOperatorAuth) {
@@ -34,12 +32,37 @@ function checkOperator(req, res, next) {
   next();
 }
 
-/* GET all trains listing with optional search filter (Public) */
+/* GET all trains listing with optional search & route filter (Public) */
 router.get('/', async function(req, res, next) {
   try {
     var trains = await getTrainsBreaker.fire();
     var search = req.query.search || req.query.station;
+    var origin = req.query.origin || req.query.from;
+    var destination = req.query.destination || req.query.to;
 
+    // Filter by Origin & Destination route
+    if (origin || destination) {
+      trains = trains.filter(function(t) {
+        var origMatch = true;
+        var destMatch = true;
+
+        if (origin) {
+          var oq = origin.toLowerCase();
+          origMatch = (t.origin && t.origin.toLowerCase().indexOf(oq) !== -1) ||
+                      (t.stops && t.stops.some(function(s) { return s.station && s.station.toLowerCase().indexOf(oq) !== -1; }));
+        }
+
+        if (destination) {
+          var dq = destination.toLowerCase();
+          destMatch = (t.destination && t.destination.toLowerCase().indexOf(dq) !== -1) ||
+                      (t.stops && t.stops.some(function(s) { return s.station && s.station.toLowerCase().indexOf(dq) !== -1; }));
+        }
+
+        return origMatch && destMatch;
+      });
+    }
+
+    // Filter by general search query (train number, name, station)
     if (search) {
       var q = search.toLowerCase();
       trains = trains.filter(function(t) {
@@ -93,7 +116,6 @@ router.put('/:id', checkOperator, async function(req, res, next) {
 
     var updatedTrain = await updateTrainBreaker.fire({ id: existing.id, updateData: updateData });
 
-    // Log Operational Audit
     var logAuditAction = req.app.get('logAuditAction');
     if (logAuditAction) {
       logAuditAction(
@@ -103,7 +125,6 @@ router.put('/:id', checkOperator, async function(req, res, next) {
       );
     }
 
-    // Real-Time WebSocket & Redis Push
     broadcastUpdate(req);
 
     res.json({ message: 'Train schedule updated successfully', train: updatedTrain });
@@ -125,8 +146,8 @@ router.post('/', checkOperator, async function(req, res, next) {
       id: body.id || newId,
       trainNumber: body.trainNumber || ('EXP-' + Math.floor(Math.random() * 900 + 100)),
       name: body.name,
-      origin: body.origin || 'Main Terminal',
-      destination: body.destination || 'Central Station',
+      origin: body.origin || 'Delhi (NDLS)',
+      destination: body.destination || 'Jaipur (JP)',
       scheduledTime: body.scheduledTime,
       estimatedTime: body.estimatedTime || body.scheduledTime,
       platform: body.platform || 'Platform 1',
@@ -138,7 +159,6 @@ router.post('/', checkOperator, async function(req, res, next) {
 
     var created = await dbEngine.createTrain(newTrain);
 
-    // Log Operational Audit
     var logAuditAction = req.app.get('logAuditAction');
     if (logAuditAction) {
       logAuditAction(
@@ -148,7 +168,6 @@ router.post('/', checkOperator, async function(req, res, next) {
       );
     }
 
-    // Real-Time WebSocket & Redis Push
     broadcastUpdate(req);
 
     res.status(201).json({ message: 'Train schedule created successfully', train: created });
@@ -168,7 +187,6 @@ router.delete('/:id', checkOperator, async function(req, res, next) {
 
     await dbEngine.deleteTrain(existing.id);
 
-    // Log Operational Audit
     var logAuditAction = req.app.get('logAuditAction');
     if (logAuditAction) {
       logAuditAction(
@@ -178,7 +196,6 @@ router.delete('/:id', checkOperator, async function(req, res, next) {
       );
     }
 
-    // Real-Time WebSocket & Redis Push
     broadcastUpdate(req);
 
     res.json({ message: 'Train schedule deleted successfully', id: existing.id });
