@@ -1,9 +1,10 @@
-// RailPulse Client Engine - Apple SF Pro Design System & All-India Route Finder Engine
+// RailPulse Client Engine - Where Is My Train All-India Route & Distance Engine
 
 var allTrainsData = [];
 var originFilter = "";
 var destFilter = "";
 var searchQuery = "";
+var maxDistanceFilter = 0;
 var socket = null;
 var isOperatorAuthed = false;
 var operatorToken = "";
@@ -33,6 +34,7 @@ $(document).ready(function() {
     originFilter = $('#routeOriginInput').val().trim();
     destFilter = $('#routeDestInput').val().trim();
     searchQuery = $('#trainSearchInput').val().trim();
+    maxDistanceFilter = parseInt($('#distanceInput').val(), 10) || 0;
     renderCommuterBoard();
   });
 
@@ -42,16 +44,26 @@ $(document).ready(function() {
     $('#routeOriginInput').val(from);
     $('#routeDestInput').val(to);
     $('#trainSearchInput').val('');
+    $('#distanceInput').val('');
     originFilter = from;
     destFilter = to;
     searchQuery = "";
+    maxDistanceFilter = 0;
     renderCommuterBoard();
   });
 
-  $('#routeOriginInput, #routeDestInput, #trainSearchInput').on('keyup input', function() {
+  $('.btn-quick-dist').on('click', function() {
+    var maxKm = parseInt($(this).data('maxkm'), 10) || 0;
+    $('#distanceInput').val(maxKm);
+    maxDistanceFilter = maxKm;
+    renderCommuterBoard();
+  });
+
+  $('#routeOriginInput, #routeDestInput, #trainSearchInput, #distanceInput').on('keyup input', function() {
     originFilter = $('#routeOriginInput').val().trim();
     destFilter = $('#routeDestInput').val().trim();
     searchQuery = $('#trainSearchInput').val().trim();
+    maxDistanceFilter = parseInt($('#distanceInput').val(), 10) || 0;
     renderCommuterBoard();
   });
 
@@ -329,7 +341,7 @@ function renderRouteMap() {
     html += '      <span class="font-weight-bold text-info"><i class="fas fa-train mr-1"></i> ' + t.name + '</span>';
     html += '      <span class="' + statusBadge + '">' + t.status + '</span>';
     html += '    </div>';
-    html += '    <p class="x-small text-muted mb-2">Route: ' + (t.origin || 'Delhi') + ' &rarr; ' + (t.destination || 'Jaipur') + '</p>';
+    html += '    <p class="x-small text-muted mb-2">Route: ' + (t.origin || 'Delhi') + ' &rarr; ' + (t.destination || 'Jaipur') + ' (' + (t.distanceKm || 308) + ' km)</p>';
     html += '    <div class="d-flex justify-content-between align-items-center x-small">';
     html += '      <span><i class="fas fa-clock mr-1 text-muted"></i> Sched: ' + t.scheduledTime + '</span>';
     html += '      <span class="apple-platform-pill">' + (t.platform || 'Platform 1') + '</span>';
@@ -357,9 +369,55 @@ function renderSummaryStats() {
   $('#cancelledCount').text(cancelled);
 }
 
+function showStationTimeline(trainId) {
+  var train = allTrainsData.find(function(t) { return t.id === trainId || t.trainNumber === trainId; });
+  if (!train) return;
+
+  $('#timelineTrainTitle').text(train.trainNumber + ' - ' + train.name);
+  var daysText = (train.runsOnDays || ['Daily']).join(', ');
+  $('#timelineTrainSub').text(train.origin + ' ➔ ' + train.destination + ' (' + (train.distanceKm || 308) + ' km) • Duration: ' + (train.travelDuration || '4h 30m') + ' • Runs: ' + daysText);
+
+  var html = '';
+  html += '<div class="station-timeline p-3" style="background: rgba(0,0,0,0.5); border-radius: 16px;">';
+  if (train.stops && train.stops.length > 0) {
+    train.stops.forEach(function(s, idx) {
+      var isFirst = (idx === 0);
+      var isLast = (idx === train.stops.length - 1);
+      var dotBg = isFirst ? 'bg-success' : (isLast ? 'bg-danger' : 'bg-info');
+
+      html += '<div class="d-flex align-items-center mb-3 pb-2 border-bottom border-secondary">';
+      html += '  <div class="mr-3 text-center" style="width: 70px;">';
+      html += '    <span class="badge badge-secondary p-1" style="font-size: 0.75rem;"><i class="fas fa-road mr-1"></i>' + (s.km !== undefined ? s.km : (idx * 75)) + ' km</span>';
+      html += '  </div>';
+      html += '  <div class="mr-3 text-center">';
+      html += '    <span class="node-circle ' + dotBg + '" style="width: 28px; height: 28px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%;"><i class="fas fa-circle text-white"></i></span>';
+      html += '  </div>';
+      html += '  <div class="flex-grow-1">';
+      html += '    <h6 class="text-white font-weight-bold mb-0">' + s.station + '</h6>';
+      html += '    <span class="x-small text-muted">Arrival: <strong class="text-white">' + s.arrival + '</strong> | Departure: <strong class="text-white">' + s.departure + '</strong></span>';
+      html += '  </div>';
+      html += '  <div class="text-right">';
+      html += '    <span class="badge ' + (s.status === 'DELAYED' ? 'badge-warning' : 'badge-success') + '">' + (s.status || 'ON-TIME') + '</span>';
+      html += '  </div>';
+      html += '</div>';
+    });
+  } else {
+    html += '<p class="text-muted text-center">No intermediate stops configured.</p>';
+  }
+  html += '</div>';
+
+  $('#timelineContent').html(html);
+  $('#timelineModal').modal('show');
+}
+
 function renderCommuterBoard() {
   var filtered = allTrainsData.filter(function(t) {
-    // 1. Origin Filter
+    // 1. Max Distance KM Filter
+    if (maxDistanceFilter > 0) {
+      if ((t.distanceKm || 0) > maxDistanceFilter) return false;
+    }
+
+    // 2. Origin Filter
     if (originFilter) {
       var oq = originFilter.toLowerCase();
       var oMatch = (t.origin && t.origin.toLowerCase().indexOf(oq) !== -1) ||
@@ -367,7 +425,7 @@ function renderCommuterBoard() {
       if (!oMatch) return false;
     }
 
-    // 2. Destination Filter
+    // 3. Destination Filter
     if (destFilter) {
       var dq = destFilter.toLowerCase();
       var dMatch = (t.destination && t.destination.toLowerCase().indexOf(dq) !== -1) ||
@@ -375,7 +433,7 @@ function renderCommuterBoard() {
       if (!dMatch) return false;
     }
 
-    // 3. Train Number or Name Search Query Filter
+    // 4. Train Number or Name Search Query Filter
     if (searchQuery) {
       var q = searchQuery.toLowerCase();
       var matchName = t.name && t.name.toLowerCase().indexOf(q) !== -1;
@@ -390,7 +448,7 @@ function renderCommuterBoard() {
   });
 
   if (filtered.length === 0) {
-    $('#commuterTrainGrid').html('<div class="col-12 text-center text-muted py-5"><i class="fas fa-search fa-2x mb-3 text-secondary d-block"></i>No trains found matching route: ' + (originFilter || 'Any') + ' ➔ ' + (destFilter || 'Any') + '</div>');
+    $('#commuterTrainGrid').html('<div class="col-12 text-center text-muted py-5"><i class="fas fa-search fa-2x mb-3 text-secondary d-block"></i>No trains found matching criteria: ' + (originFilter || 'Any') + ' ➔ ' + (destFilter || 'Any') + (maxDistanceFilter ? ' (Max ' + maxDistanceFilter + ' km)' : '') + '</div>');
     return;
   }
 
@@ -399,6 +457,7 @@ function renderCommuterBoard() {
     var statusClass = 'apple-status-' + t.status;
     var isDelayed = (t.status === 'DELAYED');
     var isCancelled = (t.status === 'CANCELLED');
+    var daysText = (t.runsOnDays || ['Daily']).join(', ');
 
     html += '<div class="col-md-6 col-lg-4 mb-4">';
     html += '  <div class="apple-card d-flex flex-column justify-content-between">';
@@ -412,8 +471,14 @@ function renderCommuterBoard() {
     html += '      </div>';
 
     html += '      <h5 class="text-white font-weight-bold mb-1 letter-spacing-tight">' + t.name + '</h5>';
-    html += '      <p class="x-small text-muted mb-3"><i class="fas fa-route mr-1 text-info"></i> ' + (t.origin || 'Delhi') + ' &rarr; ' + (t.destination || 'Jaipur') + '</p>';
+    html += '      <p class="x-small text-muted mb-2"><i class="fas fa-route mr-1 text-info"></i> ' + (t.origin || 'Delhi') + ' &rarr; ' + (t.destination || 'Jaipur') + '</p>';
     
+    // Distance & Runs On Badges (Where Is My Train style)
+    html += '      <div class="d-flex justify-content-between align-items-center x-small mb-3 p-2 rounded" style="background: rgba(255,255,255,0.04);">';
+    html += '        <span><i class="fas fa-road text-warning mr-1"></i> <strong>' + (t.distanceKm || 308) + ' km</strong> (' + (t.travelDuration || '4h 30m') + ')</span>';
+    html += '        <span class="text-info"><i class="fas fa-calendar-alt mr-1"></i> ' + daysText + '</span>';
+    html += '      </div>';
+
     html += '      <div class="row text-center p-3 rounded mb-3" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.06);">';
     html += '        <div class="col-6 border-right border-secondary">';
     html += '          <span class="d-block x-small text-muted letter-spacing-wide">SCHEDULED</span>';
@@ -433,10 +498,13 @@ function renderCommuterBoard() {
 
     if (t.stops && t.stops.length > 0) {
       html += '    <div class="mb-3 p-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1);">';
-      html += '      <span class="d-block x-small text-muted mb-1"><i class="fas fa-list-ol mr-1 text-primary"></i> Route Stops & Timings:</span>';
+      html += '      <div class="d-flex justify-content-between align-items-center mb-1">';
+      html += '        <span class="x-small text-muted"><i class="fas fa-list-ol mr-1 text-primary"></i> Route Halts & Timings:</span>';
+      html += '        <button class="btn btn-xs btn-link text-info p-0" onclick="showStationTimeline(\'' + t.id + '\')">Full Schedule ➔</button>';
+      html += '      </div>';
       html += '      <div class="d-flex flex-wrap x-small text-light">';
       t.stops.forEach(function(s, idx) {
-        html += '       <span class="mr-2 mb-1"><i class="fas fa-angle-right text-muted mr-1"></i><strong>' + s.station.split(' ')[0] + '</strong> (' + s.arrival + ')</span>';
+        html += '       <span class="mr-2 mb-1"><i class="fas fa-angle-right text-muted mr-1"></i><strong>' + s.station.split(' ')[0] + '</strong> (' + (s.km !== undefined ? s.km + 'km' : s.arrival) + ')</span>';
       });
       html += '      </div>';
       html += '    </div>';
@@ -450,11 +518,12 @@ function renderCommuterBoard() {
     }
     html += '    </div>';
 
+    html += '    <div class="pt-2 border-top border-secondary d-flex justify-content-between align-items-center">';
+    html += '      <button class="btn btn-outline-light apple-btn-pill btn-sm" onclick="showStationTimeline(\'' + t.id + '\')"><i class="fas fa-eye mr-1"></i> Where Is My Train</button>';
     if (isOperatorAuthed) {
-      html += '  <div class="pt-2 border-top border-secondary text-right">';
       html += '    <button class="btn btn-outline-info apple-btn-pill btn-sm" onclick="openDispatchModal(\'' + t.id + '\')"><i class="fas fa-edit mr-1"></i> Edit Dispatch</button>';
-      html += '  </div>';
     }
+    html += '    </div>';
 
     html += '  </div>';
     html += '</div>';
@@ -475,7 +544,7 @@ function renderOperatorTable() {
     html += '<tr>';
     html += '  <td><span class="badge badge-warning text-dark font-weight-bold" style="border-radius: 8px;">' + (t.trainNumber || 'EXP') + '</span></td>';
     html += '  <td class="font-weight-bold text-white">' + t.name + '</td>';
-    html += '  <td class="small text-muted">' + (t.origin || 'Delhi') + ' &rarr; ' + (t.destination || 'Jaipur') + '</td>';
+    html += '  <td class="small text-muted">' + (t.origin || 'Delhi') + ' &rarr; ' + (t.destination || 'Jaipur') + ' (' + (t.distanceKm || 308) + ' km)</td>';
     html += '  <td>' + t.scheduledTime + '</td>';
     html += '  <td><span class="apple-platform-pill">' + (t.platform || 'Platform 1') + '</span></td>';
     html += '  <td><span class="' + statusClass + '">' + t.status + '</span></td>';
@@ -582,6 +651,8 @@ function submitAddTrain() {
   var origin = $('#newOrigin').val().trim();
   var dest = $('#newDest').val().trim();
   var scheduledTime = $('#newScheduledTime').val().trim();
+  var distanceKm = parseInt($('#newDistanceKm').val(), 10) || 308;
+  var duration = $('#newDuration').val().trim() || '4h 30m';
 
   if (!name || !scheduledTime) {
     alert('Please enter train name and scheduled time.');
@@ -594,6 +665,8 @@ function submitAddTrain() {
     platform: platform,
     origin: origin,
     destination: dest,
+    distanceKm: distanceKm,
+    travelDuration: duration,
     scheduledTime: scheduledTime
   };
 

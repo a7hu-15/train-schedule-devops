@@ -32,13 +32,25 @@ function checkOperator(req, res, next) {
   next();
 }
 
-/* GET all trains listing with optional search & route filter (Public) */
+/* GET all trains listing with optional search, route & distance filter (Where Is My Train API) */
 router.get('/', async function(req, res, next) {
   try {
     var trains = await getTrainsBreaker.fire();
-    var search = req.query.search || req.query.station;
+    var search = req.query.search || req.query.station || req.query.trainNumber;
     var origin = req.query.origin || req.query.from;
     var destination = req.query.destination || req.query.to;
+    var maxDist = parseInt(req.query.maxDistance || req.query.maxKm, 10);
+    var minDist = parseInt(req.query.minDistance || req.query.minKm, 10);
+
+    // Filter by Distance (KM) Range
+    if (!isNaN(maxDist) || !isNaN(minDist)) {
+      trains = trains.filter(function(t) {
+        var dist = t.distanceKm || 0;
+        var passMax = isNaN(maxDist) ? true : (dist <= maxDist);
+        var passMin = isNaN(minDist) ? true : (dist >= minDist);
+        return passMax && passMin;
+      });
+    }
 
     // Filter by Origin & Destination route
     if (origin || destination) {
@@ -83,7 +95,7 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-/* GET single train by ID or Name (Public) */
+/* GET single train by ID, Train Number, or Name (Public) */
 router.get('/:id', async function(req, res, next) {
   try {
     var train = await dbEngine.getTrainById(req.params.id);
@@ -148,6 +160,9 @@ router.post('/', checkOperator, async function(req, res, next) {
       name: body.name,
       origin: body.origin || 'Delhi (NDLS)',
       destination: body.destination || 'Jaipur (JP)',
+      distanceKm: parseInt(body.distanceKm, 10) || 308,
+      travelDuration: body.travelDuration || '4h 30m',
+      runsOnDays: body.runsOnDays || ['Daily'],
       scheduledTime: body.scheduledTime,
       estimatedTime: body.estimatedTime || body.scheduledTime,
       platform: body.platform || 'Platform 1',

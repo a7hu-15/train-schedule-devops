@@ -6,6 +6,17 @@
       "name": "Ajmer Shatabdi Express",
       "origin": "New Delhi (NDLS)",
       "destination": "Ajmer Junction (AII)",
+      "distanceKm": 444,
+      "travelDuration": "6h 45m",
+      "runsOnDays": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
       "scheduledTime": "06:10 AM",
       "estimatedTime": "06:10 AM",
       "platform": "Platform 2",
@@ -15,36 +26,42 @@
       "stops": [
         {
           "station": "New Delhi (NDLS)",
+          "km": 0,
           "status": "ON-TIME",
           "arrival": "06:10am",
           "departure": "06:10am"
         },
         {
           "station": "Delhi Cantt (DEC)",
+          "km": 15,
           "status": "ON-TIME",
           "arrival": "06:38am",
           "departure": "06:40am"
         },
         {
           "station": "Gurgaon (GGN)",
+          "km": 32,
           "status": "ON-TIME",
           "arrival": "06:56am",
           "departure": "06:58am"
         },
         {
           "station": "Alwar (AWR)",
+          "km": 151,
           "status": "ON-TIME",
           "arrival": "08:47am",
           "departure": "08:50am"
         },
         {
           "station": "Jaipur Junction (JP)",
+          "km": 308,
           "status": "ON-TIME",
           "arrival": "10:40am",
           "departure": "10:45am"
         },
         {
           "station": "Ajmer Junction (AII)",
+          "km": 444,
           "status": "ON-TIME",
           "arrival": "12:55pm",
           "departure": "12:55pm"
@@ -59,6 +76,17 @@
       "name": "Swarna Jayanti Rajdhani Express",
       "origin": "New Delhi (NDLS)",
       "destination": "Sabarmati BG (SBIB)",
+      "distanceKm": 928,
+      "travelDuration": "11h 20m",
+      "runsOnDays": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
       "scheduledTime": "08:45 PM",
       "estimatedTime": "08:45 PM",
       "platform": "Platform 1",
@@ -68,24 +96,35 @@
       "stops": [
         {
           "station": "New Delhi (NDLS)",
+          "km": 0,
           "status": "ON-TIME",
           "arrival": "08:45pm",
           "departure": "08:45pm"
         },
         {
           "station": "Delhi Cantt (DEC)",
+          "km": 15,
           "status": "ON-TIME",
           "arrival": "09:08pm",
           "departure": "09:10pm"
         },
         {
           "station": "Jaipur Junction (JP)",
+          "km": 308,
           "status": "ON-TIME",
           "arrival": "01:00am",
           "departure": "01:10am"
         },
         {
+          "station": "Abu Road (ABR)",
+          "km": 613,
+          "status": "ON-TIME",
+          "arrival": "04:55am",
+          "departure": "05:05am"
+        },
+        {
           "station": "Sabarmati BG (SBIB)",
+          "km": 928,
           "status": "ON-TIME",
           "arrival": "08:05am",
           "departure": "08:05am"
@@ -100,6 +139,17 @@
       "name": "Chetak Express",
       "origin": "Delhi Sarai Rohilla (DEE)",
       "destination": "Udaipur City (UDZ)",
+      "distanceKm": 673,
+      "travelDuration": "12h 10m",
+      "runsOnDays": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
       "scheduledTime": "07:40 PM",
       "estimatedTime": "07:55 PM",
       "platform": "Platform 3",
@@ -109,24 +159,35 @@
       "stops": [
         {
           "station": "Delhi Sarai Rohilla (DEE)",
+          "km": 0,
           "status": "ON-TIME",
           "arrival": "07:40pm",
           "departure": "07:40pm"
         },
         {
           "station": "Gurgaon (GGN)",
+          "km": 27,
           "status": "ON-TIME",
           "arrival": "08:11pm",
           "departure": "08:13pm"
         },
         {
+          "station": "Rewari (RE)",
+          "km": 78,
+          "status": "DELAYED",
+          "arrival": "09:10pm",
+          "departure": "09:15pm"
+        },
+        {
           "station": "Jaipur Junction (JP)",
+          "km": 303,
           "status": "DELAYED",
           "arrival": "12:45am",
           "departure": "12:55am"
         },
         {
           "station": "Udaipur City (UDZ)",
+          "km": 673,
           "status": "DELAYED",
           "arrival": "07:50am",
           "departure": "07:50am"
@@ -141,6 +202,17 @@
       "name": "Pooja Superfast Express",
       "origin": "Jammu Tawi (JAT)",
       "destination": "Ajmer Junction (AII)",
+      "distanceKm": 1018,
+      "travelDuration": "19h 55m",
+      "runsOnDays": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
       "scheduledTime": "04:15 AM",
       "estimatedTime": "04:15 AM",
       "platform": "Platform 4",
@@ -149,25 +221,36 @@
       "delayReason": "None",
       "stops": [
         {
+          "station": "Jammu Tawi (JAT)",
+          "km": 0,
+          "status": "ON-TIME",
+          "arrival": "06:15pm",
+          "departure": "06:15pm"
+        },
+        {
           "station": "Old Delhi (DLI)",
+          "km": 577,
           "status": "ON-TIME",
           "arrival": "04:00am",
           "departure": "04:15am"
         },
         {
           "station": "Gurgaon (GGN)",
+          "km": 608,
           "status": "ON-TIME",
           "arrival": "04:53am",
           "departure": "04:55am"
         },
         {
           "station": "Jaipur Junction (JP)",
+          "km": 882,
           "status": "ON-TIME",
           "arrival": "09:30am",
           "departure": "09:40am"
         },
         {
           "station": "Ajmer Junction (AII)",
+          "km": 1018,
           "status": "ON-TIME",
           "arrival": "12:10pm",
           "departure": "12:10pm"
@@ -182,6 +265,17 @@
       "name": "Ashram Express",
       "origin": "Old Delhi (DLI)",
       "destination": "Sabarmati BG (SBIB)",
+      "distanceKm": 923,
+      "travelDuration": "15h 00m",
+      "runsOnDays": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
       "scheduledTime": "03:20 PM",
       "estimatedTime": "03:20 PM",
       "platform": "Platform 3",
@@ -191,24 +285,28 @@
       "stops": [
         {
           "station": "Old Delhi (DLI)",
+          "km": 0,
           "status": "ON-TIME",
           "arrival": "03:20pm",
           "departure": "03:20pm"
         },
         {
           "station": "Delhi Cantt (DEC)",
+          "km": 14,
           "status": "ON-TIME",
           "arrival": "03:53pm",
           "departure": "03:55pm"
         },
         {
           "station": "Jaipur Junction (JP)",
+          "km": 303,
           "status": "ON-TIME",
           "arrival": "08:15pm",
           "departure": "08:25pm"
         },
         {
           "station": "Sabarmati BG (SBIB)",
+          "km": 923,
           "status": "ON-TIME",
           "arrival": "06:20am",
           "departure": "06:20am"
@@ -223,6 +321,16 @@
       "name": "Ajmer - Delhi Vande Bharat Express",
       "origin": "Ajmer Junction (AII)",
       "destination": "Delhi Cantt (DEC)",
+      "distanceKm": 429,
+      "travelDuration": "5h 15m",
+      "runsOnDays": [
+        "Mon",
+        "Tue",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
       "scheduledTime": "06:20 AM",
       "estimatedTime": "06:20 AM",
       "platform": "Platform 1",
@@ -232,24 +340,28 @@
       "stops": [
         {
           "station": "Ajmer Junction (AII)",
+          "km": 0,
           "status": "ON-TIME",
           "arrival": "06:20am",
           "departure": "06:20am"
         },
         {
           "station": "Jaipur Junction (JP)",
+          "km": 135,
           "status": "ON-TIME",
           "arrival": "07:50am",
           "departure": "07:55am"
         },
         {
           "station": "Alwar (AWR)",
+          "km": 293,
           "status": "ON-TIME",
           "arrival": "09:35am",
           "departure": "09:37am"
         },
         {
           "station": "Delhi Cantt (DEC)",
+          "km": 429,
           "status": "ON-TIME",
           "arrival": "11:35am",
           "departure": "11:35am"
@@ -264,6 +376,15 @@
       "name": "Vande Bharat Express",
       "origin": "New Delhi (NDLS)",
       "destination": "Varanasi (BSB)",
+      "distanceKm": 755,
+      "travelDuration": "8h 00m",
+      "runsOnDays": [
+        "Tue",
+        "Wed",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
       "scheduledTime": "06:00 AM",
       "estimatedTime": "06:00 AM",
       "platform": "Platform 16",
@@ -273,24 +394,28 @@
       "stops": [
         {
           "station": "New Delhi (NDLS)",
+          "km": 0,
           "status": "ON-TIME",
           "arrival": "06:00am",
           "departure": "06:00am"
         },
         {
           "station": "Kanpur Central (CNB)",
+          "km": 440,
           "status": "ON-TIME",
           "arrival": "10:08am",
           "departure": "10:10am"
         },
         {
           "station": "Prayagraj (PRYJ)",
+          "km": 634,
           "status": "ON-TIME",
           "arrival": "12:08pm",
           "departure": "12:10pm"
         },
         {
           "station": "Varanasi (BSB)",
+          "km": 755,
           "status": "ON-TIME",
           "arrival": "02:00pm",
           "departure": "02:00pm"
@@ -305,6 +430,17 @@
       "name": "Mumbai Rajdhani Express",
       "origin": "Mumbai Central (MMCT)",
       "destination": "New Delhi (NDLS)",
+      "distanceKm": 1384,
+      "travelDuration": "15h 32m",
+      "runsOnDays": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
       "scheduledTime": "05:00 PM",
       "estimatedTime": "05:15 PM",
       "platform": "Platform 1",
@@ -314,24 +450,35 @@
       "stops": [
         {
           "station": "Mumbai Central (MMCT)",
+          "km": 0,
           "status": "ON-TIME",
           "arrival": "05:00pm",
           "departure": "05:00pm"
         },
         {
           "station": "Surat (ST)",
+          "km": 263,
           "status": "ON-TIME",
           "arrival": "07:43pm",
           "departure": "07:48pm"
         },
         {
           "station": "Vadodara (BRC)",
+          "km": 393,
           "status": "DELAYED",
           "arrival": "09:10pm",
           "departure": "09:20pm"
         },
         {
+          "station": "Kota (KOTA)",
+          "km": 920,
+          "status": "DELAYED",
+          "arrival": "03:15am",
+          "departure": "03:25am"
+        },
+        {
           "station": "New Delhi (NDLS)",
+          "km": 1384,
           "status": "DELAYED",
           "arrival": "08:32am",
           "departure": "08:32am"
@@ -346,6 +493,17 @@
       "name": "Bhopal Shatabdi Express",
       "origin": "New Delhi (NDLS)",
       "destination": "Rani Kamlapati (RKMP)",
+      "distanceKm": 701,
+      "travelDuration": "8h 30m",
+      "runsOnDays": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
       "scheduledTime": "06:00 AM",
       "estimatedTime": "06:00 AM",
       "platform": "Platform 1",
@@ -355,27 +513,38 @@
       "stops": [
         {
           "station": "New Delhi (NDLS)",
+          "km": 0,
           "status": "ON-TIME",
           "arrival": "06:00am",
           "departure": "06:00am"
         },
         {
           "station": "Agra Cantt (AGC)",
+          "km": 195,
           "status": "ON-TIME",
           "arrival": "07:50am",
           "departure": "07:55am"
         },
         {
           "station": "Gwalior (GWL)",
+          "km": 313,
           "status": "ON-TIME",
           "arrival": "09:23am",
           "departure": "09:28am"
         },
         {
-          "station": "Rani Kamlapati (RKMP)",
+          "station": "Jhansi (VGLJ)",
+          "km": 410,
           "status": "ON-TIME",
-          "arrival": "02:00pm",
-          "departure": "02:00pm"
+          "arrival": "10:45am",
+          "departure": "10:50am"
+        },
+        {
+          "station": "Rani Kamlapati (RKMP)",
+          "km": 701,
+          "status": "ON-TIME",
+          "arrival": "02:30pm",
+          "departure": "02:30pm"
         }
       ],
       "coachDensity": "Low",
@@ -387,6 +556,14 @@
       "name": "Sealdah Duronto Express",
       "origin": "Sealdah (SDAH)",
       "destination": "Bikaner Junction (BKN)",
+      "distanceKm": 1918,
+      "travelDuration": "22h 45m",
+      "runsOnDays": [
+        "Mon",
+        "Wed",
+        "Thu",
+        "Sun"
+      ],
       "scheduledTime": "05:00 PM",
       "estimatedTime": "05:25 PM",
       "platform": "Platform 9",
@@ -396,24 +573,28 @@
       "stops": [
         {
           "station": "Sealdah (SDAH)",
+          "km": 0,
           "status": "ON-TIME",
           "arrival": "05:00pm",
           "departure": "05:00pm"
         },
         {
           "station": "Dhanbad (DHN)",
+          "km": 266,
           "status": "DELAYED",
           "arrival": "08:10pm",
           "departure": "08:15pm"
         },
         {
           "station": "Kanpur Central (CNB)",
+          "km": 1018,
           "status": "DELAYED",
           "arrival": "06:20am",
           "departure": "06:25am"
         },
         {
           "station": "Bikaner (BKN)",
+          "km": 1918,
           "status": "DELAYED",
           "arrival": "03:45pm",
           "departure": "03:45pm"
@@ -432,15 +613,6 @@
       "status": "ON-TIME",
       "station": "Jaipur Junction (JP)",
       "timestamp": "2026-08-05T10:40:00.000Z"
-    },
-    {
-      "id": "HIST-12957",
-      "trainId": "TR-12957",
-      "trainNumber": "12957",
-      "delayMinutes": 0,
-      "status": "ON-TIME",
-      "station": "New Delhi (NDLS)",
-      "timestamp": "2026-08-05T08:45:00.000Z"
     }
   ],
   "gpsTelemetry": [

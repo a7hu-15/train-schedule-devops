@@ -6,7 +6,7 @@ block content
     .dynamic-island-container
       .dynamic-island.d-flex.align-items-center
         i.fas.fa-circle.text-success.mr-2.fa-xs(style="animation: pulse 2s infinite;")
-        span.font-weight-semibold.small.mr-3 Indian Railways Live Transit Feed
+        span.font-weight-semibold.small.mr-3 Indian Railways Live Status & Route Distance Hub
         span.text-muted.x-small.mr-3 |
         span.font-weight-bold.text-white.small#liveClock --:--:--
 
@@ -17,14 +17,14 @@ block content
           i.fas.fa-train.text-warning.fa-lg
         div
           span.font-weight-bold.text-white.h5.mb-0.letter-spacing-tight RailPulse
-          span.d-block.x-small.text-muted All-India Train & Disruption Hub
+          span.d-block.x-small.text-muted All-India Train, Route & Distance Engine
       
       // macOS Segmented Control Bar
       ul.nav.apple-segmented-nav#mainTabs(role="tablist")
         li.nav-item
           a.nav-link.active#commuter-tab(data-toggle="tab", href="#commuter-view", role="tab")
             i.fas.fa-search-location.mr-2
-            span Route & Train Finder
+            span Route & Distance Finder
         li.nav-item
           a.nav-link#map-tab(data-toggle="tab", href="#map-view", role="tab")
             i.fas.fa-map-marked-alt.mr-2
@@ -57,38 +57,44 @@ block content
     // Main Content Views
     .tab-content#tabContent
       // ==========================================
-      // VIEW 1: ROUTE & TRAIN FINDER (COMMUTER VIEW)
+      // VIEW 1: ROUTE & DISTANCE FINDER (COMMUTER VIEW)
       // ==========================================
       .tab-pane.fade.show.active#commuter-view(role="tabpanel")
-        // Route & Train Search Controls
+        // Route, Train No & Distance Search Controls
         .apple-card.p-4.mb-4
           h6.font-weight-bold.text-white.mb-3
-            i.fas.fa-route.text-info.mr-2
-            span Find Trains Across India (By Route or Train No)
+            i.fas.fa-compass.text-warning.mr-2
+            span Where Is My Train - Route, Distance & Train No Search
           .form-row
-            .form-group.col-md-4.col-12.mb-2
+            .form-group.col-md-3.col-12.mb-2
               label.x-small.text-muted FROM (ORIGIN STATION / CITY)
               .position-relative
                 i.fas.fa-map-pin.apple-search-icon
                 input.form-control.apple-search-input#routeOriginInput(type="text", placeholder="e.g. Delhi, Jaipur, Mumbai...")
-            .form-group.col-md-4.col-12.mb-2
+            .form-group.col-md-3.col-12.mb-2
               label.x-small.text-muted TO (DESTINATION STATION / CITY)
               .position-relative
                 i.fas.fa-flag-checkered.apple-search-icon
                 input.form-control.apple-search-input#routeDestInput(type="text", placeholder="e.g. Jaipur, Agra, Varanasi...")
-            .form-group.col-md-4.col-12.mb-2
+            .form-group.col-md-3.col-12.mb-2
               label.x-small.text-muted TRAIN NUMBER OR NAME
               .position-relative
                 i.fas.fa-search.apple-search-icon
                 input.form-control.apple-search-input#trainSearchInput(type="text", placeholder="e.g. 12015, 12957, Shatabdi...")
+            .form-group.col-md-3.col-12.mb-2
+              label.x-small.text-muted MAX ROUTE DISTANCE (KM)
+              .position-relative
+                i.fas.fa-road.apple-search-icon
+                input.form-control.apple-search-input#distanceInput(type="number", min="0", placeholder="e.g. 500, 1000 km...")
 
           .d-flex.flex-wrap.align-items-center.justify-content-between.mt-2
             .quick-routes.mb-2
-              span.x-small.text-muted.mr-2 Popular Routes:
-              button.btn.btn-xs.btn-outline-info.apple-btn-pill.mr-1.mb-1.btn-quick-route(data-from="Delhi", data-to="Jaipur") Delhi ➔ Jaipur
-              button.btn.btn-xs.btn-outline-info.apple-btn-pill.mr-1.mb-1.btn-quick-route(data-from="Mumbai", data-to="Delhi") Mumbai ➔ Delhi
-              button.btn.btn-xs.btn-outline-info.apple-btn-pill.mr-1.mb-1.btn-quick-route(data-from="Delhi", data-to="Varanasi") Delhi ➔ Varanasi
-              button.btn.btn-xs.btn-outline-info.apple-btn-pill.mr-1.mb-1.btn-quick-route(data-from="", data-to="") Clear Filters
+              span.x-small.text-muted.mr-2 Presets:
+              button.btn.btn-xs.btn-outline-info.apple-btn-pill.mr-1.mb-1.btn-quick-route(data-from="Delhi", data-to="Jaipur", data-km="") Delhi ➔ Jaipur (308 km)
+              button.btn.btn-xs.btn-outline-info.apple-btn-pill.mr-1.mb-1.btn-quick-route(data-from="Mumbai", data-to="Delhi", data-km="") Mumbai ➔ Delhi (1384 km)
+              button.btn.btn-xs.btn-outline-warning.apple-btn-pill.mr-1.mb-1.btn-quick-dist(data-maxkm="500") Short (< 500 km)
+              button.btn.btn-xs.btn-outline-warning.apple-btn-pill.mr-1.mb-1.btn-quick-dist(data-maxkm="1000") Medium (500-1000 km)
+              button.btn.btn-xs.btn-outline-secondary.apple-btn-pill.mr-1.mb-1.btn-quick-route(data-from="", data-to="", data-km="") Reset
             
             button.btn.btn-primary.apple-btn-pill.px-4#btnSearchRoute
               i.fas.fa-search.mr-2
@@ -131,22 +137,22 @@ block content
               .station-node.text-center
                 .node-circle.bg-success
                   i.fas.fa-building.text-white
-                span.d-block.font-weight-bold.mt-2.small Delhi (NDLS)
+                span.d-block.font-weight-bold.mt-2.small Delhi (0 km)
                 span.x-small.text-muted Northern Hub
               .station-node.text-center
                 .node-circle.bg-info
                   i.fas.fa-subway.text-white
-                span.d-block.font-weight-bold.mt-2.small Jaipur (JP)
+                span.d-block.font-weight-bold.mt-2.small Jaipur (308 km)
                 span.x-small.text-muted Western Line
               .station-node.text-center
                 .node-circle.bg-warning
                   i.fas.fa-exchange-alt.text-white
-                span.d-block.font-weight-bold.mt-2.small Kanpur (CNB)
+                span.d-block.font-weight-bold.mt-2.small Kanpur (440 km)
                 span.x-small.text-muted Central Junction
               .station-node.text-center
                 .node-circle.bg-primary
                   i.fas.fa-flag-checkered.text-white
-                span.d-block.font-weight-bold.mt-2.small Mumbai (MMCT)
+                span.d-block.font-weight-bold.mt-2.small Mumbai (1384 km)
                 span.x-small.text-muted Southern Corridor
 
           .mt-4
@@ -176,7 +182,7 @@ block content
                 tr
                   th Train No.
                   th Train Name
-                  th Route
+                  th Route & Distance
                   th Sched.
                   th Platform
                   th Status
@@ -273,8 +279,22 @@ block content
               pre.p-3.bg-black.text-success.rounded.small.mb-0#sreLogTerminal(style="height: 160px; overflow-y: auto;") System initialized. Monitoring metrics...
 
   // ==========================================
-  // MODALS (Apple Styling)
+  // MODALS (Apple & Where Is My Train Styling)
   // ==========================================
+
+  // Where Is My Train - Station Timeline Modal
+  .modal.fade#timelineModal(tabindex="-1", role="dialog", aria-hidden="true")
+    .modal-dialog.modal-lg.modal-dialog-centered(role="document")
+      .modal-content.apple-modal.text-white
+        .modal-header.border-0.pb-2
+          div
+            h5.modal-title.font-weight-bold.mb-0#timelineTrainTitle Train Schedule Timeline
+            p.x-small.text-muted.mb-0#timelineTrainSub Distance, Halts & Operating Days
+          button.close.text-white(type="button", data-dismiss="modal") &times;
+        .modal-body.py-3
+          #timelineContent
+        .modal-footer.border-0.pt-0
+          button.btn.btn-secondary.apple-btn-pill(type="button", data-dismiss="modal") Close
 
   // Staff Login Modal (Passcode: 8899)
   .modal.fade#operatorAuthModal(tabindex="-1", role="dialog", aria-hidden="true")
@@ -396,6 +416,13 @@ block content
               .form-group.col-md-6
                 label.x-small.text-muted DESTINATION
                 input.form-control.apple-modal-input#newDest(type="text", placeholder="e.g. Jaipur (JP)")
+            .form-row
+              .form-group.col-md-6
+                label.x-small.text-muted DISTANCE (KM)
+                input.form-control.apple-modal-input#newDistanceKm(type="number", min="1", placeholder="e.g. 308")
+              .form-group.col-md-6
+                label.x-small.text-muted TRAVEL DURATION
+                input.form-control.apple-modal-input#newDuration(type="text", placeholder="e.g. 4h 30m")
             .form-group.mb-0
               label.x-small.text-muted SCHEDULED DEPARTURE TIME
               input.form-control.apple-modal-input#newScheduledTime(type="text", placeholder="e.g. 06:10 AM", required)
