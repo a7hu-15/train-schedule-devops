@@ -6,6 +6,19 @@ var FileSync = require('lowdb/adapters/FileSync');
 var adapter = new FileSync('data/trains.json');
 var db = low(adapter);
 
+// Helper function to broadcast real-time WebSocket update to all clients
+function broadcastUpdate(req) {
+  try {
+    var io = req.app.get('io');
+    if (io) {
+      var trains = db.get('trains').value() || [];
+      io.emit('trains_updated', trains);
+    }
+  } catch (err) {
+    console.error('Error broadcasting websocket update:', err);
+  }
+}
+
 /* GET all trains listing with optional search filter. */
 router.get('/', function(req, res, next) {
   var trains = db.get('trains').value() || [];
@@ -66,6 +79,10 @@ router.put('/:id', function(req, res, next) {
     .write();
 
   var updatedTrain = db.get('trains').find({ id: existing.id }).value();
+  
+  // Real-Time WebSocket Push
+  broadcastUpdate(req);
+
   res.json({ message: 'Train schedule updated successfully', train: updatedTrain });
 });
 
@@ -93,6 +110,10 @@ router.post('/', function(req, res, next) {
   };
 
   db.get('trains').push(newTrain).write();
+  
+  // Real-Time WebSocket Push
+  broadcastUpdate(req);
+
   res.status(201).json({ message: 'Train schedule created successfully', train: newTrain });
 });
 
@@ -108,6 +129,10 @@ router.delete('/:id', function(req, res, next) {
   }
 
   db.get('trains').remove({ id: existing.id }).write();
+  
+  // Real-Time WebSocket Push
+  broadcastUpdate(req);
+
   res.json({ message: 'Train schedule deleted successfully', id: existing.id });
 });
 

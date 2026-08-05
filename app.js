@@ -3,12 +3,21 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var client = require('prom-client');
 var broken = false;
 
 var indexRouter = require('./routes/index');
 var trainsRouter = require('./routes/trains');
 
 var app = express();
+
+// Prometheus Metrics Setup
+client.collectDefaultMetrics({ timeout: 5000 });
+var httpRequestCounter = new client.Counter({
+  name: 'http_requests_total',
+  help: 'Total number of HTTP requests processed by RailPulse',
+  labelNames: ['method', 'route', 'status']
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,6 +28,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Collect request metrics
+app.use(function(req, res, next) {
+  res.on('finish', function() {
+    if (req.path !== '/metrics') {
+      httpRequestCounter.inc({ method: req.method, route: req.path, status: res.statusCode });
+    }
+  });
+  next();
+});
 
 app.use(function (req, res, next) {
    res.locals = {
@@ -31,6 +50,16 @@ app.use(function (req, res, next) {
 app.use('/', indexRouter);
 app.use('/trains', trainsRouter);
 app.use('/api/v1/trains', trainsRouter);
+
+// Prometheus Metrics Endpoint for Grafana / Observability
+app.get('/metrics', async function(req, res, next) {
+  try {
+    res.set('Content-Type', client.register.contentType);
+    res.end(await client.register.metrics());
+  } catch (err) {
+    res.status(500).end(err);
+  }
+});
 
 // Kubernetes Liveness Probe Endpoint
 app.get('/health', function(req, res, next) {

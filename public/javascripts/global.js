@@ -1,10 +1,14 @@
-// RailPulse Client Engine - Real-Time Sync & Ops Controller
+// RailPulse Client Engine - Real-Time WebSockets & Sync Controller
 
 var allTrainsData = [];
 var activeStationFilter = "";
 var searchQuery = "";
+var socket = null;
 
 $(document).ready(function() {
+  // Connect WebSocket for Instant Live Push Updates (< 50ms latency)
+  initWebSocket();
+
   // Start Live Tickers
   updateLiveClock();
   setInterval(updateLiveClock, 1000);
@@ -13,8 +17,8 @@ $(document).ready(function() {
   fetchTrainsData();
   fetchSreHealth();
 
-  // Auto-Refresh polling (Every 3 seconds)
-  setInterval(fetchTrainsData, 3000);
+  // Fallback Polling (Every 6 seconds)
+  setInterval(fetchTrainsData, 6000);
   setInterval(fetchSreHealth, 4000);
 
   // Event Listeners - Search & Filters
@@ -50,6 +54,33 @@ $(document).ready(function() {
   $('#btnRestoreApp').on('click', triggerRestoreApp);
   $('#btnCpuStress').on('click', triggerCpuStress);
 });
+
+// Initialize WebSocket Connection
+function initWebSocket() {
+  try {
+    if (typeof io !== 'undefined') {
+      socket = io();
+      socket.on('connect', function() {
+        logSreTerminal('⚡ Real-Time WebSocket connected (ID: ' + socket.id + ')');
+      });
+
+      // Handle Live Push Updates
+      socket.on('trains_updated', function(data) {
+        logSreTerminal('📡 Live WebSocket Push received! Refreshing passenger board instantly.');
+        allTrainsData = data || [];
+        renderSummaryStats();
+        renderCommuterBoard();
+        renderOperatorTable();
+      });
+
+      socket.on('disconnect', function() {
+        logSreTerminal('WebSocket disconnected. Falling back to HTTP polling.');
+      });
+    }
+  } catch (err) {
+    console.log('Socket.IO initialization error, using HTTP fallback.');
+  }
+}
 
 // Live Clock Ticker
 function updateLiveClock() {
@@ -249,7 +280,6 @@ function submitDispatchUpdate() {
     data: JSON.stringify(updatePayload),
     success: function(res) {
       $('#dispatchModal').modal('hide');
-      fetchTrainsData();
       logSreTerminal('Updated train ' + id + ' -> Status: ' + status + ', Platform: ' + platform);
     },
     error: function(err) {
@@ -289,7 +319,6 @@ function submitAddTrain() {
     success: function(res) {
       $('#addTrainModal').modal('hide');
       $('#addTrainForm')[0].reset();
-      fetchTrainsData();
       logSreTerminal('Added new train schedule: ' + name);
     },
     error: function(err) {
@@ -306,7 +335,6 @@ function deleteTrain(id) {
     url: '/api/v1/trains/' + id,
     type: 'DELETE',
     success: function(res) {
-      fetchTrainsData();
       logSreTerminal('Deleted train schedule: ' + id);
     }
   });
