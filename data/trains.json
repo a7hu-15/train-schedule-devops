@@ -25,7 +25,9 @@
           "arrival": "1:00pm",
           "departure": "1:10pm"
         }
-      ]
+      ],
+      "coachDensity": "Overcrowded",
+      "densityReports": 14
     },
     {
       "id": "TR-102",
@@ -54,7 +56,9 @@
           "delayedArrival": "1:15pm",
           "delayedDeparture": "1:25pm"
         }
-      ]
+      ],
+      "coachDensity": "Overcrowded",
+      "densityReports": 34
     },
     {
       "id": "TR-103",
@@ -83,7 +87,9 @@
           "delayedArrival": "2:15pm",
           "delayedDeparture": "2:25pm"
         }
-      ]
+      ],
+      "coachDensity": "Moderate",
+      "densityReports": 18
     },
     {
       "id": "TR-104",
@@ -116,7 +122,9 @@
           "arrival": "3:10pm",
           "departure": "3:20pm"
         }
-      ]
+      ],
+      "coachDensity": "Low",
+      "densityReports": 8
     },
     {
       "id": "TR-105",
@@ -143,7 +151,87 @@
           "arrival": "4:30pm",
           "departure": "4:40pm"
         }
-      ]
+      ],
+      "coachDensity": "Low",
+      "densityReports": 0
     }
-  ]
+  ],
+  "historyLogs": [
+    {
+      "id": "HIST-101",
+      "trainId": "TR-101",
+      "trainNumber": "EXP-101",
+      "delayMinutes": 0,
+      "status": "ON-TIME",
+      "station": "Sycamore",
+      "timestamp": "2026-08-04T08:19:38.862Z"
+    },
+    {
+      "id": "HIST-102",
+      "trainId": "TR-102",
+      "trainNumber": "EXP-204",
+      "delayMinutes": 25,
+      "status": "DELAYED",
+      "station": "Pine",
+      "timestamp": "2026-08-04T20:19:38.863Z"
+    },
+    {
+      "id": "HIST-103",
+      "trainId": "TR-103",
+      "trainNumber": "EXP-309",
+      "delayMinutes": 15,
+      "status": "DELAYED",
+      "station": "Cypress",
+      "timestamp": "2026-08-05T02:19:38.863Z"
+    },
+    {
+      "id": "HIST-104",
+      "trainId": "TR-104",
+      "trainNumber": "EXP-412",
+      "delayMinutes": 0,
+      "status": "ON-TIME",
+      "station": "Hickory",
+      "timestamp": "2026-08-05T05:19:38.863Z"
+    }
+  ],
+  "gpsTelemetry": [
+    {
+      "id": "GPS-1785918021800",
+      "trainId": "TR-101",
+      "trainNumber": "EXP-101",
+      "lat": 40.7128,
+      "lng": -74.006,
+      "speedKmh": 82,
+      "timestamp": "2026-08-05T08:20:21.800Z"
+    }
+  ],
+  "coachDensity": {
+    "TR-101": {
+      "density": "Overcrowded",
+      "reports": 14,
+      "lastUpdated": "2026-08-05T08:28:19.667Z"
+    },
+    "TR-102": {
+      "density": "Low",
+      "reports": 35,
+      "lastUpdated": "2026-08-05T08:28:27.178Z"
+    },
+    "TR-103": {
+      "density": "Moderate",
+      "reports": 18,
+      "lastUpdated": "2026-08-05T08:19:38.863Z"
+    },
+    "TR-104": {
+      "density": "Low",
+      "reports": 8,
+      "lastUpdated": "2026-08-05T08:19:38.863Z"
+    }
+  },
+  "multiRegionState": {
+    "primaryRegion": "us-east-1 (N. Virginia - Active)",
+    "secondaryRegion": "eu-central-1 (Frankfurt - Standby)",
+    "activeRegion": "us-east-1",
+    "failoverStatus": "HEALTHY",
+    "lastFailover": null
+  }
 }

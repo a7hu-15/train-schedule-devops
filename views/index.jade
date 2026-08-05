@@ -2,53 +2,65 @@ extends layout
 
 block content
   .app-container
-    // Header & Navigation
+    // Navbar Header
     header.main-header.d-flex.justify-content-between.align-items-center
-      .brand-title
-        i.fas.fa-train.text-warning.mr-2
-        span.font-weight-bold.text-white RailPulse
-        span.badge.badge-pill.badge-primary.ml-2.align-middle Live Transit Ops
+      .brand-title.d-flex.align-items-center
+        i.fas.fa-train.text-warning.mr-2.fa-lg
+        div
+          span.font-weight-bold.text-white.h5.mb-0 RailPulse
+          span.d-block.x-small.text-muted Transit Disruption & Operations
       
+      // Main Navigation
       ul.nav.nav-pills.main-nav#mainTabs(role="tablist")
         li.nav-item
           a.nav-link.active#commuter-tab(data-toggle="tab", href="#commuter-view", role="tab")
             i.fas.fa-clock.mr-2
-            span Commuter Board
+            span Live Departures
         li.nav-item
           a.nav-link#map-tab(data-toggle="tab", href="#map-view", role="tab")
             i.fas.fa-map-marked-alt.mr-2
-            span Live Route Map
-        li.nav-item
+            span Network Map
+        li.nav-item#operator-nav-item(style="display: none;")
           a.nav-link#operator-tab(data-toggle="tab", href="#operator-view", role="tab")
             i.fas.fa-sliders-h.mr-2
-            span Operator Desk
-        li.nav-item
+            span Dispatcher Desk
+        li.nav-item#sre-nav-item(style="display: none;")
           a.nav-link#sre-tab(data-toggle="tab", href="#sre-view", role="tab")
             i.fas.fa-shield-alt.mr-2
-            span SRE Chaos Room
+            span System Health & SRE
 
-      .system-time-badge.text-right
+      .d-flex.align-items-center
         button.btn.btn-outline-warning.btn-sm.mr-2(data-toggle="modal", data-target="#subscribeModal")
           i.fas.fa-bell.mr-1
-          span Subscribe Alerts
-        span.font-weight-bold.text-success#liveClock --:--:--
+          span Alerts
+        
+        button.btn.btn-outline-primary.btn-sm.mr-3#btnStaffLogin(data-toggle="modal", data-target="#operatorAuthModal")
+          i.fas.fa-user-lock.mr-1
+          span Staff Mode
+        
+        button.btn.btn-outline-danger.btn-sm.mr-3#btnStaffLogout(style="display: none;")
+          i.fas.fa-sign-out-alt.mr-1
+          span Sign Out
+        
+        .time-display.text-right
+          span.font-weight-bold.text-success#liveClock --:--:--
 
-    // Alert Banner Container for Live Delay Toast Notifications
+    // Alert Banner Container
     #globalAlertContainer.mt-3
 
-    // Tab Contents
+    // Main Tab Views
     .tab-content.mt-4#tabContent
       // ==========================================
-      // TAB 1: COMMUTER LIVE BOARD
+      // VIEW 1: LIVE DEPARTURES (COMMUTER VIEW)
       // ==========================================
       .tab-pane.fade.show.active#commuter-view(role="tabpanel")
         .row.mb-4.align-items-center
-          .col-md-6
+          .col-md-7
             .search-box.position-relative
               i.fas.fa-search.search-icon
               input.form-control.search-input#commuterSearch(type="text", placeholder="Search by station, train name, or train number...")
-          .col-md-6.text-md-right.mt-2.mt-md-0
-            span.small.text-muted.mr-2 Filter by Station:
+          .col-md-5.text-md-right.mt-2.mt-md-0
+            span.small.text-muted.mr-2 Station Filter:
             .btn-group.btn-group-sm.station-filter-group(role="group")
               button.btn.btn-outline-secondary.active(data-station="") All
               button.btn.btn-outline-secondary(data-station="Sycamore") Sycamore
@@ -56,37 +68,37 @@ block content
               button.btn.btn-outline-secondary(data-station="Cypress") Cypress
               button.btn.btn-outline-secondary(data-station="Hickory") Hickory
 
+        // Summary Bar
         .disruption-summary.mb-4.p-3.rounded.bg-dark-card
           .row.text-center
             .col-md-3.col-6.border-right.border-secondary
-              span.d-block.small.text-muted TOTAL TRAINS
+              span.d-block.x-small.text-muted TOTAL SCHEDULES
               span.h4.font-weight-bold.text-white#totalTrainsCount 0
             .col-md-3.col-6.border-right.border-secondary
-              span.d-block.small.text-muted ON TIME
+              span.d-block.x-small.text-muted ON TIME
               span.h4.font-weight-bold.text-success#onTimeCount 0
             .col-md-3.col-6.border-right.border-secondary
-              span.d-block.small.text-muted DELAYED
+              span.d-block.x-small.text-muted DELAYED
               span.h4.font-weight-bold.text-warning#delayedCount 0
             .col-md-3.col-6
-              span.d-block.small.text-muted CANCELLED
+              span.d-block.x-small.text-muted CANCELLED
               span.h4.font-weight-bold.text-danger#cancelledCount 0
 
         #commuterTrainGrid.row
 
       // ==========================================
-      // TAB 2: LIVE ROUTE MAP & TRAIN TRACKER
+      // VIEW 2: NETWORK MAP
       // ==========================================
       .tab-pane.fade#map-view(role="tabpanel")
         .card.bg-dark-card.text-white.p-4.mb-4
           .d-flex.justify-content-between.align-items-center.mb-3
             div
-              h5.font-weight-bold.mb-0 Interactive Transit Line Network
-              p.small.text-muted Live track status, station nodes, and real-time train positions.
+              h5.font-weight-bold.mb-0 Transit Line Topology
+              p.small.text-muted.mb-0 Track nodes and live status indicators across line segments.
             span.badge.badge-success.p-2
               i.fas.fa-broadcast-tower.mr-1
-              span Network Status: Operational
+              span Network Operational
 
-          // Route Map Diagram
           .route-map-container.py-5.px-3.my-3.bg-black.rounded.position-relative
             .route-line
             .d-flex.justify-content-between.align-items-center.position-relative(style="z-index: 2;")
@@ -109,32 +121,29 @@ block content
                 .node-circle.bg-primary
                   i.fas.fa-flag-checkered
                 span.d-block.font-weight-bold.mt-2 Hickory
-                span.x-small.text-muted South Line
+                span.x-small.text-muted Terminal B
 
           .mt-4
-            h6.font-weight-bold.mb-3 Active Trains On Line
+            h6.font-weight-bold.mb-3 Running Trains
             #mapTrainList.row
 
       // ==========================================
-      // TAB 3: TRANSIT OPERATOR DISPATCH DESK (RBAC Protected)
+      // VIEW 3: DISPATCHER DESK (STAFF ONLY)
       // ==========================================
       .tab-pane.fade#operator-view(role="tabpanel")
         .d-flex.justify-content-between.align-items-center.mb-3
           div
-            h5.text-white.mb-0 Dispatcher Operations Panel
+            h5.text-white.mb-0 Dispatcher Operations Desk
             p.small.text-muted.mb-0 Update train statuses, adjust delay minutes, select disruption reasons, or re-assign platforms live.
           div
             span.badge.badge-success.mr-2.p-2#operatorAuthStatus
               i.fas.fa-lock-open.mr-1
-              span Operator Authenticated
-            button.btn.btn-outline-danger.btn-sm.mr-2#btnLockOperator
-              i.fas.fa-lock.mr-1
-              span Lock Desk
-            button.btn.btn-success.btn-sm(data-toggle="modal", data-target="#addTrainModal")
+              span Staff Authenticated
+            button.btn.btn-success.btn-sm#btnOpenAddTrainModal(data-toggle="modal", data-target="#addTrainModal")
               i.fas.fa-plus-circle.mr-2
               span Add Schedule
 
-        .table-responsive.bg-dark-card.rounded.p-3
+        .table-responsive.bg-dark-card.rounded.p-3.mb-4
           table.table.table-dark.table-hover.mb-0#operatorTable
             thead
               tr
@@ -151,27 +160,69 @@ block content
               tr
                 td(colspan="9").text-center.text-muted Loading dispatch data...
 
+        // Operational Audit Trail Section
+        .card.bg-dark-card.text-white
+          .card-header.d-flex.justify-content-between.align-items-center
+            span.font-weight-bold
+              i.fas.fa-history.text-info.mr-2
+              span Operational Security Audit Log
+            span.badge.badge-info Audit Active
+          .card-body.p-0
+            .table-responsive(style="max-height: 200px; overflow-y: auto;")
+              table.table.table-dark.table-sm.table-striped.mb-0
+                thead
+                  tr
+                    th Timestamp
+                    th Action
+                    th Operational Details
+                    th Role
+                tbody#auditLogsTableBody
+                  tr
+                    td(colspan="4").text-center.text-muted Loading security audit history...
+
       // ==========================================
-      // TAB 4: SRE CHAOS & RELIABILITY ROOM
+      // VIEW 4: SYSTEM HEALTH & SRE (STAFF ONLY)
       // ==========================================
       .tab-pane.fade#sre-view(role="tabpanel")
+        // Service Metrics Summary Card
+        .card.bg-dark-card.text-white.mb-4
+          .card-header.d-flex.justify-content-between.align-items-center
+            span.font-weight-bold
+              i.fas.fa-chart-line.text-success.mr-2
+              span System Observability & Service Metrics
+            span.badge.badge-success Target: 99.9% Availability
+          .card-body
+            .row.text-center
+              .col-md-3.col-6.border-right.border-secondary
+                span.d-block.x-small.text-muted AVAILABILITY UPTIME
+                span.h4.font-weight-bold.text-success#sloAvailabilityVal 99.94%
+              .col-md-3.col-6.border-right.border-secondary
+                span.d-block.x-small.text-muted SYNTHETIC LATENCY
+                span.h4.font-weight-bold.text-info#synthP95Val 18ms
+              .col-md-3.col-6.border-right.border-secondary
+                span.d-block.x-small.text-muted ERROR BUDGET
+                span.h4.font-weight-bold.text-primary#sloBudgetVal 98.2%
+              .col-md-3.col-6
+                span.d-block.x-small.text-muted DISRUPTION COUNT
+                span.h4.font-weight-bold.text-warning#sloMttrVal 0
+
         .row
           .col-md-6.mb-4
             .card.bg-dark-card.text-white.h-100
               .card-header.d-flex.justify-content-between.align-items-center
                 span.font-weight-bold
                   i.fas.fa-heartbeat.text-danger.mr-2
-                  span Kubernetes Liveness Probe (/health)
+                  span Liveness Probe (/health)
                 span.badge#livenessBadge.badge-success Healthy
               .card-body
-                p.card-text.small.text-muted Controls app instance health status returned to Kubernetes pod liveness monitors.
+                p.card-text.small.text-muted Controls application instance health status returned to Kubernetes pod probes.
                 .mb-3
-                  span.d-block.small.text-muted CURRENT PROBE RESPONSE:
+                  span.d-block.x-small.text-muted PROBE RESPONSE:
                   code.d-block.p-2.bg-black.rounded#livenessResponseJson Loading...
                 .d-flex
                   button.btn.btn-danger.btn-block.mr-2#btnBreakApp
                     i.fas.fa-skull.mr-2
-                    span Inject Outage (/break)
+                    span Inject Failure (/break)
                   button.btn.btn-success.btn-block.mt-0#btnRestoreApp
                     i.fas.fa-check-circle.mr-2
                     span Restore Health (/restore)
@@ -181,47 +232,49 @@ block content
               .card-header.d-flex.justify-content-between.align-items-center
                 span.font-weight-bold
                   i.fas.fa-microchip.text-info.mr-2
-                  span HPA CPU Stress Tester (/generate-cpu-load)
+                  span HPA Stress Tester (/generate-cpu-load)
                 span.badge.badge-info Autoscaling Test
               .card-body
                 p.card-text.small.text-muted Triggers intensive CPU loop calculations to test Kubernetes Horizontal Pod Autoscaling (HPA).
                 .mb-3
-                  span.d-block.small.text-muted LAST EXECUTION RESULT:
-                  code.d-block.p-2.bg-black.rounded#cpuResultJson Ready to run calculation...
+                  span.d-block.x-small.text-muted EXECUTION RESULT:
+                  code.d-block.p-2.bg-black.rounded#cpuResultJson Ready to test...
                 button.btn.btn-warning.btn-block#btnCpuStress
                   i.fas.fa-bolt.mr-2
-                  span Generate Heavy CPU Load
+                  span Run CPU Load Test
 
         .row
           .col-12
             .card.bg-dark-card.text-white
               .card-header
                 i.fas.fa-terminal.mr-2.text-warning
-                span Real-Time Probe & WebSocket Log Monitor
+                span Real-Time Probe Log Monitor
               .card-body
-                pre.p-3.bg-black.text-success.rounded.small.mb-0#sreLogTerminal(style="height: 180px; overflow-y: auto;") System initialized. Listening for probe metrics...
+                pre.p-3.bg-black.text-success.rounded.small.mb-0#sreLogTerminal(style="height: 160px; overflow-y: auto;") System initialized. Monitoring metrics...
 
   // ==========================================
   // MODALS
   // ==========================================
-  
-  // Operator Login Modal (RBAC Security)
-  .modal.fade#operatorAuthModal(tabindex="-1", role="dialog", data-backdrop="static", data-keyboard="false", aria-hidden="true")
+
+  // Staff Login Modal (Passcode: 8899)
+  .modal.fade#operatorAuthModal(tabindex="-1", role="dialog", aria-hidden="true")
     .modal-dialog.modal-dialog-centered(role="document")
       .modal-content.bg-dark-modal.text-white
         .modal-header
           h5.modal-title
             i.fas.fa-user-shield.mr-2.text-warning
-            span Operator Desk Security Check
+            span Staff Mode Sign In
+          button.close.text-white(type="button", data-dismiss="modal") &times;
         .modal-body
-          p.small.text-muted Access to the Operator Control Desk requires authorization. Please enter your Dispatcher Passcode.
+          p.small.text-muted Enter your Staff Passcode to unlock Dispatcher Operations & System Health controls.
           form#operatorAuthForm
             .form-group
-              label.small.text-muted Passcode / PIN
-              input.form-control.bg-dark-input.text-white#operatorPinInput(type="password", placeholder="Enter PIN (Default: 1234 or dispatch123)", required)
-              .invalid-feedback#authErrorMsg Invalid passcode. Please try again.
+              label.small.text-muted Enter Passcode (Default: 8899)
+              input.form-control.bg-dark-input.text-white#operatorPinInput(type="password", placeholder="Enter Passcode", required)
+              .invalid-feedback#authErrorMsg Invalid passcode. Access denied.
         .modal-footer
-          button.btn.btn-primary.btn-block#btnSubmitAuth(type="button") Unlock Operator Desk
+          button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          button.btn.btn-primary#btnSubmitAuth(type="button") Authenticate
 
   // Passenger Alert Subscription Modal
   .modal.fade#subscribeModal(tabindex="-1", role="dialog", aria-hidden="true")
@@ -253,7 +306,7 @@ block content
                 option(value="15") Delay > 15 minutes
         .modal-footer
           button.btn.btn-secondary(type="button", data-dismiss="modal") Close
-          button.btn.btn-warning#btnSaveSubscribe(type="button") Enable Notifications
+          button.btn.btn-warning#btnSaveSubscribe(type="button") Enable Alerts
 
   // Dispatch Edit Modal
   .modal.fade#dispatchModal(tabindex="-1", role="dialog", aria-hidden="true")
@@ -262,7 +315,7 @@ block content
         .modal-header
           h5.modal-title
             i.fas.fa-edit.mr-2.text-primary
-            span Update Dispatch Details: 
+            span Dispatcher Update: 
             span#modalTrainTitle
           button.close.text-white(type="button", data-dismiss="modal") &times;
         .modal-body
@@ -282,7 +335,7 @@ block content
                 label.small.text-muted Platform
                 input.form-control.bg-dark-input.text-white#dispatchPlatform(type="text", placeholder="e.g. Platform 2")
             .form-group
-              label.small.text-muted Disruption / Delay Reason
+              label.small.text-muted Disruption Reason
               select.form-control.bg-dark-input.text-white.mb-2#dispatchPresetReason
                 option(value="None") None (On-Time)
                 option(value="Signaling Fault at Station Junction") Signaling Fault at Station Junction
@@ -293,7 +346,7 @@ block content
               input.form-control.bg-dark-input.text-white#dispatchCustomReason(type="text", placeholder="Type custom disruption reason...", style="display:none;")
         .modal-footer
           button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
-          button.btn.btn-primary#btnSaveDispatch(type="button") Save & Broadcast Update
+          button.btn.btn-primary#btnSaveDispatch(type="button") Broadcast Update
 
   // Add Train Modal
   .modal.fade#addTrainModal(tabindex="-1", role="dialog", aria-hidden="true")
@@ -302,13 +355,13 @@ block content
         .modal-header
           h5.modal-title
             i.fas.fa-plus-circle.mr-2.text-success
-            span Add New Train Schedule
+            span Add Train Schedule
           button.close.text-white(type="button", data-dismiss="modal") &times;
         .modal-body
           form#addTrainForm
             .form-group
               label.small.text-muted Train Name
-              input.form-control.bg-dark-input.text-white#newTrainName(type="text", placeholder="e.g. Bullet Commuter", required)
+              input.form-control.bg-dark-input.text-white#newTrainName(type="text", placeholder="e.g. Bullet Express", required)
             .form-row
               .form-group.col-md-6
                 label.small.text-muted Train Number
@@ -328,4 +381,4 @@ block content
               input.form-control.bg-dark-input.text-white#newScheduledTime(type="text", placeholder="e.g. 04:15 PM", required)
         .modal-footer
           button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
-          button.btn.btn-success#btnAddTrainSave(type="button") Add Schedule
+          button.btn.btn-success#btnAddTrainSave(type="button") Save Schedule

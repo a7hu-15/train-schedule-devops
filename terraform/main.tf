@@ -1,133 +1,118 @@
-# Infrastructure as Code (IaC) - Main Terraform Configuration
+# RailPulse Infrastructure-as-Code (Terraform AWS EKS / Kubernetes Provisioning)
 
-# 1. Kubernetes Namespace
-resource "kubernetes_namespace" "app_ns" {
-  metadata {
-    name = "${var.app_name}-ns"
-    labels = {
-      environment = var.environment
-      managed-by  = "terraform"
+terraform {
+  required_version = ">= 1.5.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.23"
     }
   }
 }
 
-# 2. ConfigMap for Application Environment Variables
-resource "kubernetes_config_map" "app_config" {
-  metadata {
-    name      = "${var.app_name}-config"
-    namespace = kubernetes_namespace.app_ns.metadata[0].name
-  }
+provider "aws" {
+  region = var.aws_region
+}
 
-  data = {
-    PORT        = tostring(var.container_port)
-    NODE_ENV    = var.environment
-    APP_VERSION = "2.0.0"
+variable "aws_region" {
+  default     = "us-east-1"
+  description = "AWS Region for RailPulse Transit Infrastructure"
+}
+
+variable "environment" {
+  default     = "production"
+  description = "Deployment Environment"
+}
+
+# 1. VPC Network Module
+resource "aws_vpc" "railpulse_vpc" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+
+  tags = {
+    Name        = "railpulse-vpc"
+    Environment = var.environment
   }
 }
 
-# 3. Kubernetes Deployment (App Replicas + Probes + Resource Bounds)
-resource "kubernetes_deployment" "app_deployment" {
-  metadata {
-    name      = "${var.app_name}-deployment"
-    namespace = kubernetes_namespace.app_ns.metadata[0].name
-    labels = {
-      app   = var.app_name
-      track = "stable"
-    }
-  }
+# Public Subnets
+resource "aws_subnet" "public_1" {
+  vpc_id                  = aws_vpc.railpulse_vpc.id
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "${var.aws_region}a"
+  map_public_ip_on_launch = true
 
-  spec {
-    replicas = var.replica_count
-
-    selector {
-      match_labels = {
-        app   = var.app_name
-        track = "stable"
-      }
-    }
-
-    template {
-      metadata {
-        labels = {
-          app   = var.app_name
-          track = "stable"
-        }
-      }
-
-      spec {
-        container {
-          name  = var.app_name
-          image = var.container_image
-
-          port {
-            container_port = var.container_port
-          }
-
-          env_from {
-            config_map_ref {
-              name = kubernetes_config_map.app_config.metadata[0].name
-            }
-          }
-
-          # Liveness Probe (Auto-restarts pod if /health returns 500)
-          liveness_probe {
-            http_get {
-              path = "/health"
-              port = var.container_port
-            }
-            initial_delay_seconds = 10
-            period_seconds        = 5
-            timeout_seconds       = 2
-            failure_threshold     = 3
-          }
-
-          # Readiness Probe (Routes traffic only when /ready returns 200)
-          readiness_probe {
-            http_get {
-              path = "/ready"
-              port = var.container_port
-            }
-            initial_delay_seconds = 5
-            period_seconds        = 5
-            timeout_seconds       = 2
-          }
-
-          # CPU and Memory Limits
-          resources {
-            requests = {
-              cpu    = "200m"
-              memory = "128Mi"
-            }
-            limits = {
-              cpu    = "500m"
-              memory = "256Mi"
-            }
-          }
-        }
-      }
-    }
+  tags = {
+    Name = "railpulse-public-1"
   }
 }
 
-# 4. Kubernetes Service (Exposes App externally via NodePort)
-resource "kubernetes_service" "app_service" {
-  metadata {
-    name      = "${var.app_name}-service"
-    namespace = kubernetes_namespace.app_ns.metadata[0].name
+resource "aws_subnet" "public_2" {
+  vpc_id                  = aws_vpc.railpulse_vpc.id
+  cidr_block              = "10.0.2.0/24"
+  availability_zone       = "${var.aws_region}b"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "railpulse-public-2"
+  }
+}
+
+# Internet Gateway
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.railpulse_vpc.id
+
+  tags = {
+    Name = "railpulse-igw"
+  }
+}
+
+# Security Group for EKS Cluster & Worker Nodes
+resource "aws_security_group" "eks_nodes_sg" {
+  name        = "railpulse-eks-nodes-sg"
+  description = "Security group for RailPulse worker nodes and ingress traffic"
+  vpc_id      = aws_vpc.railpulse_vpc.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
-  spec {
-    type = "NodePort"
-
-    selector = {
-      app   = var.app_name
-      track = "stable"
-    }
-
-    port {
-      port        = var.container_port
-      target_port = var.container_port
-      node_port   = var.node_port
-    }
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+output "vpc_id" {
+  value       = aws_vpc.railpulse_vpc.id
+  description = "RailPulse Production VPC ID"
+}
+
+output "security_group_id" {
+  value       = aws_security_group.eks_nodes_sg.id
+  description = "EKS Security Group ID"
 }
