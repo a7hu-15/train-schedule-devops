@@ -1,15 +1,18 @@
 # 🚆 RailPulse India — Intelligent Train Tracking & Operations Scheduling Platform
 
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-railpulse--6f8.pages.dev-00C7B7?style=for-the-badge&logo=cloudflare&logoColor=white)](https://railpulse-6f8.pages.dev)
+[![API Health](https://img.shields.io/badge/⚡_API_Status-Live_UP-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://train-schedule-devops.onrender.com/health/live)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![React](https://img.shields.io/badge/React-18-cyan.svg)](https://react.dev/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110-009688.svg)](https://fastapi.tiangolo.com/)
-[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg)](https://www.docker.com/)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-HPA-326CE5.svg)](https://kubernetes.io/)
-[![Terraform](https://img.shields.io/badge/Terraform-AWS_IaC-7B42BC.svg)](https://www.terraform.io/)
-[![Tests](https://img.shields.io/badge/Pytest-20%2F20_Passed-brightgreen.svg)](backend/tests/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL_15-3ECF8E.svg)](https://supabase.com/)
+[![Upstash](https://img.shields.io/badge/Upstash-Redis_7-00E599.svg)](https://upstash.com/)
+[![Cloudflare](https://img.shields.io/badge/Cloudflare-Pages-F38020.svg)](https://pages.cloudflare.com/)
+[![Render](https://img.shields.io/badge/Render-FastAPI_Backend-46E3B7.svg)](https://render.com/)
 
-**RailPulse India** is a passenger-facing journey tracking and railway operations scheduling intelligence platform designed to provide passengers with fast, low-bandwidth journey status, live delay calculation, and data freshness indicators powered by the **RailRadar API**, while empowering railway operators with station platform occupancy tracking, interval overlap conflict detection, and automated dispatch recommendations.
+**RailPulse India** is a passenger-facing journey tracking and railway operations scheduling intelligence platform. Experience the live application directly at **[railpulse-6f8.pages.dev](https://railpulse-6f8.pages.dev)**.
 
 ---
 
