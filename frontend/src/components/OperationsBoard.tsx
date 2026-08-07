@@ -54,7 +54,8 @@ export const OperationsBoard: React.FC = () => {
     setIsLoading(true);
     const todayStr = new Date().toISOString().split('T')[0];
     try {
-      const res = await fetch(`/api/v1/operations/stations/${stationCode}?journey_date=${todayStr}`);
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+      const res = await fetch(`${baseUrl}/api/v1/operations/stations/${stationCode}?journey_date=${todayStr}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data: StationOperationsResponse = await res.json();
       setOpsData(data);
