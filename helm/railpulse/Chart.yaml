@@ -1,9 +1,0 @@
-apiVersion: v2
-name: railpulse
-description: Helm Chart for RailPulse Enterprise Transit & SRE Platform
-type: application
-version: 1.0.0
-appVersion: "1.0.0"
-maintainers:
-  - name: SRE Platform Team
-    email: sre@railpulse.io
