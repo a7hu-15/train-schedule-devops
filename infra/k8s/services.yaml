@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: railpulse-api
+  namespace: railpulse
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      name: http
+  selector:
+    app.kubernetes.io/name: railpulse-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: railpulse-web
+  namespace: railpulse
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      name: http
+  selector:
+    app.kubernetes.io/name: railpulse-web

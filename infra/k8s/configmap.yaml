@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: railpulse-config
+  namespace: railpulse
+data:
+  APP_ENV: "production"
+  TRAIN_PROVIDER: "simulator"
+  LOG_LEVEL: "INFO"
+  REDIS_URL: "redis://railpulse-redis.railpulse.svc.cluster.local:6379/0"
