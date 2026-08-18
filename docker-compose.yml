@@ -11,14 +11,11 @@ services:
     environment:
       - APP_ENV=local
       - DATABASE_URL=postgresql://railpulse:railpulse_secret@postgres:5432/railpulse
-      - REDIS_URL=redis://redis:6379/0
       - TRAIN_PROVIDER=simulator
       - LOG_LEVEL=INFO
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_started
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health/live"]
@@ -50,18 +47,6 @@ services:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U railpulse -d railpulse"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:7-alpine
-    container_name: railpulse-redis
-    ports:
-      - "6379:6379"
-    command: redis-server --save 60 1 --loglevel notice
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 5s
       retries: 5

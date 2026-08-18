@@ -6,7 +6,7 @@ RailPulse Cloud is a modern, event-driven Platform Engineering project that simu
 
 Unlike a standard CRUD application, RailPulse acts as an operational nervous system:
 - **Event Chaining:** It ingests real-time events (like `TrainDelayed`) and automatically calculates secondary events (like `PlatformConflict`).
-- **Resilience:** If the primary Redis cache fails, the API gracefully falls back to an in-memory cache without dropping events or crashing.
+- **Resilience:** If the primary data store is unavailable, the API gracefully handles the failure without dropping events or crashing.
 - **Traceability:** Every event is assigned a unique `correlation_id`, allowing engineers to trace the entire pipeline chain.
 
 ## Tech Stack
@@ -14,7 +14,6 @@ Unlike a standard CRUD application, RailPulse acts as an operational nervous sys
 - **Backend:** FastAPI (Python 3.11)
 - **Database:** PostgreSQL
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS
-- **Cache:** Redis *(For high-speed live state projection)*
 - **Monitoring:** Prometheus, Grafana 
 - **Containerization:** Docker
 - **Orchestration:** Kubernetes *(Local manifests included)*
