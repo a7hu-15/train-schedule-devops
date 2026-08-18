@@ -12,19 +12,12 @@ Unlike a standard CRUD application, RailPulse acts as an operational nervous sys
 ## Tech Stack
 
 - **Backend:** FastAPI (Python 3.11)
-- **Primary Database (Event Store):** PostgreSQL
-- **Live State Cache:** Redis
-- **Frontend Console:** React 18, TypeScript, Vite, Tailwind CSS
-- **Observability:** Prometheus, Grafana
-- **Infrastructure:** Docker & Kubernetes (Manifests included)
-
-## Architecture
-
-1. **Ingestion API:** Receives raw operational events and offloads them to a background dispatcher.
-2. **Processing Engine:** Specialized processors (DelayProcessor, ConflictProcessor) consume events and generate new operational intelligence.
-3. **State Projection:** The current state (e.g., Platform Occupancy) is persisted to Redis for fast reads.
-4. **Event Store:** The historical record of all events is saved to PostgreSQL for audit and recovery.
-5. **Operations Console:** A minimalist React frontend that visualizes the pipeline metrics, live events, and trace logs.
+- **Database:** PostgreSQL
+- **Frontend:** React 18, TypeScript, Vite, Tailwind CSS
+- **Cache:** Redis *(For high-speed live state projection)*
+- **Monitoring:** Prometheus, Grafana 
+- **Containerization:** Docker
+- **Orchestration:** Kubernetes *(Local manifests included)*
 
 ## Running Locally
 
