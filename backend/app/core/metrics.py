@@ -23,3 +23,21 @@ REDIS_CACHE_MISSES = Counter(
     "railpulse_redis_cache_misses_total",
     "Total Redis cache misses requiring external API / database lookup"
 )
+
+# Operations Business Metrics
+PLATFORM_CONFLICTS_DETECTED = Counter(
+    "railpulse_platform_conflicts_detected_total",
+    "Total number of platform scheduling conflicts detected by the engine",
+    ["station_code"]
+)
+
+DELAY_IMPACT_CALCULATIONS = Counter(
+    "railpulse_delay_impact_calculations_total",
+    "Total number of cascading delay impact calculations performed"
+)
+
+UPSTREAM_API_FAILURES = Counter(
+    "railpulse_upstream_api_failures_total",
+    "Total number of failures from the upstream railway data providers",
+    ["provider", "reason"]
+)

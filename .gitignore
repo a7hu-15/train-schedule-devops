@@ -13,3 +13,4 @@ backend/**/__pycache__/
 .terraform/
 infra/terraform/.terraform/
 infra/terraform/terraform
+*.db

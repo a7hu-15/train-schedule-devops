@@ -37,3 +37,9 @@ def get_all_conflicts(
         all_conflicts.extend(ops.conflicts)
 
     return all_conflicts
+
+@router.get("/stats")
+def get_system_stats():
+    """Get high level pipeline statistics for the Operations Console."""
+    from app.system.storage import get_stats
+    return get_stats()
