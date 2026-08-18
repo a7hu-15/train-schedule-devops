@@ -1,24 +1,24 @@
-# RailPulse India — Final Project Report, Demo Script & Viva Guide
+# RailPulse — Final Project Report, Demo Script & Viva Guide
 
-**Project Title**: RailPulse India — Intelligent Train Tracking & Scheduling Intelligence Platform  
+**Project Title**: RailPulse — Intelligent Train Tracking & Scheduling Intelligence Platform  
 **Version**: 1.0 (Production Architecture — v1.0 Final Release)  
 **Date**: August 2026  
 **Stack**: React 18, TypeScript, Vite, FastAPI, Python 3.11, PostgreSQL 15, Redis 7, RailRadar API, Docker, Docker Compose, Kubernetes, Helm, GitHub Actions, Trivy, Prometheus, Grafana, Terraform, AWS.
 
 ---
 
-## Executive Summary
+## 1. Elevator Pitch
 
-**RailPulse India** is a passenger-facing train journey tracking and operations scheduling intelligence application designed to solve real-world railway problems—providing passengers with fast, low-bandwidth journey status, next station ETA, live delay calculation, and data freshness indicators powered by the **RailRadar API**, while empowering railway operators with real-time station platform occupancy tracking, interval overlap conflict detection, and automated dispatch recommendations in simulation mode.
+**RailPulse** is a passenger-facing train journey tracking and operations scheduling intelligence application designed to solve real-world railway problems—providing passengers with fast, low-bandwidth journey status, next station ETA, live delay calculation, and data freshness indicators powered by the **RailRadar API**, while empowering railway operators with real-time station platform occupancy tracking, interval overlap conflict detection, and automated dispatch recommendations in simulation mode.
 
 Underneath the application domain, RailPulse demonstrates production-grade **Cloud, DevOps, DevSecOps, Reliability Engineering (SRE), Caching, Container Orchestration, and Infrastructure-as-Code (IaC)** principles.
 
 ---
 
-## 1. System Architecture & Data Flow
+## 2. System Architecture & Data Flow
 
 ```text
-                               RAILPULSE INDIA
+                               RAILPULSE
                     Intelligent Train Tracking & Scheduling
                                        │
                       ┌────────────────┴────────────────┐

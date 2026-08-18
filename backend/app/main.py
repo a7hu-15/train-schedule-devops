@@ -20,7 +20,7 @@ REQUEST_COUNT = Counter("http_requests_total", "Total HTTP Requests", ["method",
 REQUEST_LATENCY = Histogram("http_request_duration_seconds", "HTTP Request Duration", ["method", "endpoint"])
 
 app = FastAPI(
-    title="RailPulse India API",
+    title="RailPulse API",
     description="Cloud-Native Train Journey Intelligence Platform API",
     version=settings.APP_VERSION,
 )

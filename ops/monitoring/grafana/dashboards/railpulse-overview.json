@@ -6,7 +6,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "title": "RailPulse India — Operational Performance Dashboard",
+  "title": "RailPulse — Operational Performance Dashboard",
   "tags": ["railpulse", "devops", "sre"],
   "timezone": "browser",
   "schemaVersion": 38,

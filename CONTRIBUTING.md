@@ -1,6 +1,6 @@
-# Contributing to RailPulse India
+# Contributing to RailPulse
 
-Thank you for your interest in contributing to **RailPulse India**! We welcome contributions to enhance train tracking algorithms, scheduling optimization, UI components, and cloud infrastructure.
+Thank you for your interest in contributing to **RailPulse**! We welcome contributions to enhance train tracking algorithms, scheduling optimization, UI components, and cloud infrastructure.
 
 ---
 
